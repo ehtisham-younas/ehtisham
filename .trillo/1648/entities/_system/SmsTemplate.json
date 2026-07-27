@@ -1,0 +1,76 @@
+{
+  "name" : "SmsTemplate",
+  "description" : "Per-app SMS template (plan-62.A). One row per (tenantId, name); body carries the renderable text. Source of truth is Trillo AI (TrilloMD row with modelClassName=\"SmsTemplate\"); AOS is a read-only consumer that the deploy populates via DeployAppMetadata.bootstrapSmsTemplates (upsert by name). Mirrors EmailTemplate, minus subject/isHtml (SMS is plain text). dataApi: open with admin read-only ACL enforces 'no management UI on AOS' — admin can read via /data/SmsTemplate/* but generic create/update/delete are blocked. Edits happen in Trillo AI, ship via redeploy.",
+  "dataApi" : "open",
+  "ownership" : "none",
+  "systemClass" : true,
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "biginteger",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "systemAttr" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 100,
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Template lookup key. Conventional names: mfaOtp, verifyPhone, genericNotice. App-custom templates use any unique-per-tenant name (e.g., 'order_shipped'). Composite unique constraint on (tenantId, name) enforced at the application layer.",
+    "platform" : true
+  }, {
+    "name" : "body",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "SMS message text (plain text). Variables are {{{var}}} simple-replace placeholders rendered at send time. Keep short — each 160-char GSM-7 segment is billed separately.",
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "string",
+    "length" : 500,
+    "persistent" : true,
+    "description" : "Admin-facing description of when this template fires. Optional.",
+    "platform" : true
+  }, {
+    "name" : "category",
+    "type" : "string",
+    "length" : 30,
+    "enumValues" : "system,app-custom",
+    "defaultValue" : "system",
+    "persistent" : true,
+    "description" : "Discriminator. 'system' templates are the standard set (mfaOtp / verifyPhone / genericNotice) deployed from Trillo AI's starter content. 'app-custom' templates are app-specific flows the developer added in Trillo AI. Both deploy identically; the discriminator helps UIs filter and reset.",
+    "platform" : true
+  } ]
+}

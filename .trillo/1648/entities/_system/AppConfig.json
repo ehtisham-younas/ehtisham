@@ -1,0 +1,304 @@
+{
+  "name" : "AppConfig",
+  "description" : "Singleton-per-schema configuration row describing the running app to itself. Created/overwritten by the deploy flow (Trillo AI is the source of truth — every redeploy overwrites). Drives CORS gating (frontendUrl + allowedCorsOrigins), per-app branding (logos, favicon, auth cover), chat/auth/legal UI settings, and tenancy mode. One row per app schema; id is always 1. dataApi: open with read-only ACL — admin and user can read via generic CRUD for branding + flags at app load; writes go through AppConfigController (which runs the emailLinkBackUrl validator + other side effects that direct PATCH would bypass). Plan-54: TrilloMD-side editor is the canonical edit surface and ships values via redeploy; AOS-side composer at GET /api/v2.0/md/app-config aggregates this row with computed identity (tenantId, appId) and deploy state for the UI.",
+  "dataApi" : "open",
+  "ownership" : "none",
+  "systemClass" : true,
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "description" : "Singleton id — always 1. Not autoSequence; deploy explicitly sets id=1 on create."
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "indexed" : true,
+    "persistent" : true,
+    "readOnly" : true,
+    "description" : "The app this config represents. Matches Tenant.id in MA-ST/SA-ST; for SA-MT this is the deployment's single app id. Used as a verification field — deploy sets it from the deploy context.",
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 100,
+    "persistent" : true,
+    "createOnly" : true,
+    "description" : "Internal kebab name (e.g., 'trillo-ai'). Stable across deploys; used as the app identifier in URLs, logs, metrics. Projected as 'appName' in the /md/app-config composer response.",
+    "platform" : true
+  }, {
+    "name" : "displayName",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "description" : "Human-readable label rendered in UI headers and metadata (e.g., 'Trillo AI Studio'). Projected as 'appDisplayName' in the /md/app-config composer response.",
+    "platform" : true
+  }, {
+    "name" : "tagline",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "description" : "Plan-56 — welcome-screen subtitle shown beneath appDisplayName.",
+    "platform" : true
+  }, {
+    "name" : "companyName",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "description" : "Plan-56 — company name used in UI footer and HTML meta tags.",
+    "platform" : true
+  }, {
+    "name" : "logoUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "DEPRECATED — kept as a transitional alias for logoIconUrl. UI should switch to logoIconUrl; this field will be removed in a follow-up plan. Composer mirrors logoIconUrl into this key for one minor version.",
+    "platform" : true
+  }, {
+    "name" : "logoIconUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — square icon (PNG/SVG, ≥64×64) shown in the sidebar logo slot and on the welcome screen. Nullable — UI falls back to a default mark.",
+    "platform" : true
+  }, {
+    "name" : "logoTextUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — optional wordmark image. When present, replaces the textual appDisplayName next to the logo icon.",
+    "platform" : true
+  }, {
+    "name" : "faviconUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — browser tab icon. Nullable — UI falls back to logoIconUrl.",
+    "platform" : true
+  }, {
+    "name" : "authCoverUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — background image used on auth pages (login, register, forgot-password).",
+    "platform" : true
+  }, {
+    "name" : "darkLogoIconUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — optional alternate logo icon for dark mode. UI uses logoIconUrl if absent.",
+    "platform" : true
+  }, {
+    "name" : "darkLogoTextUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — optional alternate logo wordmark for dark mode. UI uses logoTextUrl if absent.",
+    "platform" : true
+  }, {
+    "name" : "frontendUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Primary UI origin (e.g., 'https://app.example.com'). Auto-included in the CORS allow-list at boot. Required for any non-localhost UI to reach AOS APIs. Plan-56: also the strict-same-origin reference for emailLinkBackUrl validation on auth flows.",
+    "platform" : true
+  }, {
+    "name" : "allowedCorsOrigins",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Comma-separated list of additional origins to allow for CORS (e.g., 'https://staging.example.com,https://preview-*.example.com'). frontendUrl is auto-included — listed separately for clarity. Optional.",
+    "platform" : true
+  }, {
+    "name" : "timezone",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "Default IANA timezone for UI date rendering (e.g., 'America/Los_Angeles'). Optional — UI may override per-user via UserPreference.",
+    "platform" : true
+  }, {
+    "name" : "locale",
+    "type" : "string",
+    "length" : 20,
+    "persistent" : true,
+    "description" : "Default BCP-47 locale for UI string formatting (e.g., 'en-US'). Optional — UI may override per-user.",
+    "platform" : true
+  }, {
+    "name" : "multiTenant",
+    "type" : "boolean",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : false,
+    "description" : "Plan-55 — per-app tenancy mode. false (default) = MA-ST behavior (bootstrap admin owns tenant 0; no user-created tenants). true = MA-MT behavior (registration creates a new Tenant per user; many tenants per app schema). Immutable after first user registration — flipping it post-hoc rearranges data semantics and requires the Trillo-AI-side 'clone app' flow. Embedded in the issued JWT at login so authenticated handlers read it from RequestContext without a per-request DB hit; unauthenticated login/register endpoints do one lookup on this column before issuing the JWT or branching the register flow. Projected as 'tenancy' string in the /md/app-config composer response.",
+    "platform" : true
+  }, {
+    "name" : "chatMaxFileUploadMb",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : 10,
+    "description" : "Plan-56 — maximum file upload size (in megabytes) accepted by the chat surface. Projected under chat.maxFileUploadMb in the composer response.",
+    "platform" : true
+  }, {
+    "name" : "chatEnableConversationPinning",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : true,
+    "description" : "Plan-56 — toggle for the chat conversation-pinning UX. Projected under chat.enableConversationPinning.",
+    "platform" : true
+  }, {
+    "name" : "chatEnableConversationRename",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : true,
+    "description" : "Plan-56 — toggle for the chat conversation-rename UX. Projected under chat.enableConversationRename.",
+    "platform" : true
+  }, {
+    "name" : "chatEnableConversationDelete",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : true,
+    "description" : "Plan-56 — toggle for the chat conversation-delete UX. Projected under chat.enableConversationDelete.",
+    "platform" : true
+  }, {
+    "name" : "chatEmptyStateText",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Plan-56 — overrides the default empty-state copy on the chat surface. Null = UI uses its built-in copy. Projected under chat.emptyStateText.",
+    "platform" : true
+  }, {
+    "name" : "authPasswordMinLength",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : 8,
+    "description" : "Plan-56 — minimum password length enforced by the registration / change-password flow. Projected under auth.passwordPolicy.minLength.",
+    "platform" : true
+  }, {
+    "name" : "authPasswordRequireNumber",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "description" : "Plan-56 — require at least one digit in the password. Projected under auth.passwordPolicy.requireNumber.",
+    "platform" : true
+  }, {
+    "name" : "authPasswordRequireSymbol",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "description" : "Plan-56 — require at least one symbol in the password. Projected under auth.passwordPolicy.requireSymbol.",
+    "platform" : true
+  }, {
+    "name" : "authPasswordRequireUppercase",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "description" : "Plan-56 — require at least one uppercase letter in the password. Projected under auth.passwordPolicy.requireUppercase.",
+    "platform" : true
+  }, {
+    "name" : "authForgotPasswordRedirectUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — where the UI sends the user after a successful password reset. Must satisfy strict same-origin with frontendUrl when non-null; the composer / validator enforces this on PUT. Projected under auth.forgotPasswordRedirectUrl.",
+    "platform" : true
+  }, {
+    "name" : "authSessionTimeoutMinutes",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : 1440,
+    "description" : "Plan-56 — refresh-token lifetime hint for the auth store (minutes). Default 1440 = 24 hours. Projected under auth.sessionTimeoutMinutes.",
+    "platform" : true
+  }, {
+    "name" : "legalPrivacyUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — link to the tenant's privacy policy, rendered in the UI footer. Projected under legal.privacyUrl.",
+    "platform" : true
+  }, {
+    "name" : "legalTermsUrl",
+    "type" : "string",
+    "length" : 1024,
+    "persistent" : true,
+    "description" : "Plan-56 — link to the tenant's terms of service, rendered in the UI footer. Projected under legal.termsUrl.",
+    "platform" : true
+  }, {
+    "name" : "smsEnabled",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "description" : "Plan-62.A — whether SMS sending is enabled for this app. Declarative marker for the admin UI; effective sending also requires Twilio credentials (per-app AppSecret twilioAccountSid/twilioAuthToken/twilioFromNumber, or platform Env fallback).",
+    "platform" : true
+  }, {
+    "name" : "smsProvider",
+    "type" : "string",
+    "length" : 30,
+    "enumValues" : "twilio",
+    "defaultValue" : "twilio",
+    "persistent" : true,
+    "description" : "Plan-62.A — SMS dispatch provider. Only 'twilio' in V1; the SmsProvider abstraction allows more later. Credentials live in AppSecret, not here.",
+    "platform" : true
+  }, {
+    "name" : "authMfaEnabled",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "description" : "Plan-62.B — whether MFA is offered for this app (master switch). When true, users may opt in (UserMfaSettings.mfaEnabled).",
+    "platform" : true
+  }, {
+    "name" : "authGuestEnabled",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "description" : "Whether this app is publicly available (usable without signup). A product/UI flag the frontend reads to offer the app to unauthenticated visitors. It does NOT gate guest function/agent execution — that is gated per-item by the function/agent's role:guest declaration. Default false.",
+    "platform" : true
+  }, {
+    "name" : "authMfaRequired",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "description" : "Plan-62.B — when true, MFA is enforced for ALL users of the app at login (regardless of per-user opt-in).",
+    "platform" : true
+  }, {
+    "name" : "authMfaMethods",
+    "type" : "string",
+    "length" : 64,
+    "defaultValue" : "email,sms",
+    "persistent" : true,
+    "description" : "Plan-62.B — comma-separated OTP delivery methods the app allows: email,sms. V1 has no TOTP.",
+    "platform" : true
+  }, {
+    "name" : "driveAccess",
+    "type" : "string",
+    "length" : 20,
+    "enumValues" : "perUser,appLevel,both",
+    "defaultValue" : "perUser",
+    "persistent" : true,
+    "description" : "Plan-62.C — which Google Drive connection(s) the app enables: 'perUser' (each user's own Drive, connected at Google login), 'appLevel' (one admin-connected shared account), or 'both' (UI shows both as separate nodes). Drive ops take a 'scope' (user|app|auto) to pick the connection; auto = the user's if connected, else app-level.",
+    "platform" : true
+  } ]
+}

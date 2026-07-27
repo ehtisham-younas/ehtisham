@@ -1,0 +1,95 @@
+{
+  "name" : "OAuthAuthCode",
+  "description" : "Plan-32 C — single-use OAuth authorization code. Created at /consent (approve), exchanged at /token for an access token + refresh token. Auto-expires after 60 seconds via expiresAt (query-time filter). Single-use enforced by usedAt — the second exchange attempt returns invalid_grant and revokes any tokens issued from the same code (OAuth best practice §10.4). Lives in schema0 only (platformOnly).",
+  "dataApi" : "blocked",
+  "platformOnly" : true,
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "code",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Random 64-char auth code. Stored plaintext because (a) lifetime is 60s, (b) single-use enforced, (c) lookup-by-equality on every /token call. Refresh tokens use SHA256 hashes — their lifetime is 30d, so the cost/benefit flips."
+  }, {
+    "name" : "clientId",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "required" : true,
+    "description" : "OAuth client that requested the code. Must match the client_id sent to /token."
+  }, {
+    "name" : "redirectUri",
+    "type" : "string",
+    "length" : 512,
+    "persistent" : true,
+    "required" : true,
+    "description" : "Must match the redirect_uri sent to /token (exact-match)."
+  }, {
+    "name" : "codeChallenge",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "PKCE code_challenge captured at /authorize. /token validates SHA256(code_verifier) == codeChallenge."
+  }, {
+    "name" : "scope",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "OAuth scopes granted at consent. Echoed back in the token response."
+  }, {
+    "name" : "userTenantId",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Tenant the user selected and consented for. Baked into the issued JWT."
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "User who consented. Baked into the issued JWT."
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Epoch ms. /consent sets this to now + 60 seconds."
+  }, {
+    "name" : "usedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Epoch ms of the successful /token exchange. Null while unused. A second /token request seeing non-null here returns invalid_grant and revokes the refresh token chain that came from this code (OAuth 2.0 best practice §10.4)."
+  } ]
+}

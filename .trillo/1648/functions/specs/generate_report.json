@@ -1,0 +1,14 @@
+{
+  "name" : "generateReport",
+  "shortDescription" : "Generates configurable reports on appointments, user engagement, and communication metrics for administrators.",
+  "description" : "<h4>Overview</h4><p>This function generates various administrative reports, such as appointment summaries, user engagement statistics, or communication metrics. It allows administrators to specify report types and filtering criteria.</p><h4>Intended use</h4><p>Called by the admin dashboard UI when an administrator requests a report. Parameters include the <code>reportType</code> (e.g., 'appointments', 'messages'), and optional filters like <code>startDate</code>, <code>endDate</code>, or <code>doctorId</code>.</p><h4>Logic</h4><ol><li>Based on the <code>reportType</code> parameter, construct appropriate queries using <code>ctx.data.query</code> or <code>ctx.data.list</code> to retrieve data from relevant entities (e.g., <code>Appointment</code>, <code>Message</code>, <code>Patient</code>, <code>Doctor</code>).</li><li>Apply any specified filtering and sorting criteria.</li><li>Aggregate and format the retrieved data into a structured format suitable for reporting.</li><li>Return the generated report data.</li></ol><h4>Entities</h4><ul><li>Appointment</li><li>Patient</li><li>Doctor</li><li>Message</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "admin" ],
+  "functionName" : "generate_report",
+  "capabilities" : [ {
+    "method" : "POST",
+    "path" : "/api/v2.0/sms/send-template",
+    "grantable" : "privileged"
+  } ],
+  "role" : "user"
+}

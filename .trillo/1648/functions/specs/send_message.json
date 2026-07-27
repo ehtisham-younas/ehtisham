@@ -1,0 +1,8 @@
+{
+  "name" : "sendMessage",
+  "shortDescription" : "Sends a secure message between a patient and their assigned doctor, ensuring proper linkage and logging.",
+  "description" : "<h4>Overview</h4><p>This function facilitates secure and auditable communication between a patient and their assigned doctor. It verifies the sender and receiver relationship, creates a new <code>Message</code> record, and logs the communication event.</p><h4>Intended use</h4><p>Called by the patient or doctor UI when sending a message. Parameters include <code>senderId</code>, <code>receiverId</code>, <code>content</code>, and <code>conversationId</code>. It ensures that only authorized parties can communicate.</p><h4>Logic</h4><ol><li>Validate that the <code>senderId</code> and <code>receiverId</code> correspond to a valid patient-doctor relationship or that the sender is an admin.</li><li>Create a new <code>Message</code> record using <code>ctx.data.create</code>, populating <code>senderId</code>, <code>receiverId</code>, <code>content</code>, and <code>conversationId</code>.</li><li>Audit-log the message sending event using <code>ctx.audit.log</code>, including sender, receiver, and message content summary.</li><li>Return the created <code>Message</code> record.</li></ol><h4>Entities</h4><ul><li>Message</li><li>Patient</li><li>Doctor</li><li>AuditLog</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "patient", "doctor" ],
+  "functionName" : "send_message"
+}

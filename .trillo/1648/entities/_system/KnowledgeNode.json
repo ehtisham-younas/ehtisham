@@ -1,0 +1,107 @@
+{
+  "name" : "KnowledgeNode",
+  "description" : "Plan-57 — a chunked + embedded fragment of a knowledge source file. One row per chunk. Scoped to a KnowledgeContainer: SELECT ... WHERE knowledge_container_id = ?. A container is the namespace (e.g., '737 Knowledge', '767 Knowledge'); an agent consumes one or more containers via downstream wiring. Re-ingest = delete existing nodes for fileId and re-chunk. Future KnowledgeLink will reference node ids to form a graph. Ingestion (chunking + embedding) is deferred from V1 (will run as an async function via the scheduler); V1 ships the table + indexes so writes from the future ingestion pipeline land cleanly. ACL is read-only via generic CRUD: node lifecycle is owned by the ingestion pipeline (KnowledgeNodeService); direct CRUD would corrupt the embedding index.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "0",
+    "description" : "Plan-57 — app this node belongs to. Stamped at ingest; immutable. SA-mode rows take the DDL default (0); MA-mode rows take the request's appId.",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner — typically the user who uploaded the source file. representsOwnership drives the ownership filter.",
+    "platform" : true
+  }, {
+    "name" : "knowledgeContainerId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Plan-57 — FK to KnowledgeContainer.id. The container is the retrieval namespace (e.g., one container per topic). Queries scope by 'WHERE knowledge_container_id = ?'. An agent may consume multiple containers, and a container may serve multiple agents — the binding lives outside this table.",
+    "platform" : true
+  }, {
+    "name" : "fileId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Plan-57 — FK to the raw source File2 row this chunk was derived from. Re-ingest a file = DELETE WHERE file_id = ? then re-chunk.",
+    "platform" : true
+  }, {
+    "name" : "chunkIndex",
+    "type" : "integer",
+    "persistent" : true,
+    "description" : "Plan-57 — position of this chunk within the source file (0-based). Used to reconstruct ordering and for de-dup when re-ingesting.",
+    "platform" : true
+  }, {
+    "name" : "text",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Plan-57 — the chunk's textual content. What gets returned to the model along with the matched neighbors at retrieval time.",
+    "platform" : true
+  }, {
+    "name" : "embeddingText",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Plan-58 slice 58-B.3.3 — the text actually embedded into the 'embedding' column, when distinct from 'text'. NULL = the 'text' column itself was embedded (the case for default processingMode). Populated when processingMode='prompt' returns chunks whose LLM-supplied embeddingText differs from text — e.g., a passage's text plus a Q/A reframe used purely for retrieval. Stored for debuggability + re-embed traceability.",
+    "platform" : true
+  }, {
+    "name" : "embedding",
+    "type" : "vector",
+    "length" : 768,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Plan-57 — pgvector embedding (gemini text-embedding-004 = 768 dimensions). HNSW index on the cosine operator class for similarity retrieval (<=> operator). Same shape as AgentMemory.embedding.",
+    "platform" : true
+  }, {
+    "name" : "metadata",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Plan-57 — free-form chunk metadata (page number, section heading, language, source URL, ...). Caller-supplied at ingest; not validated server-side.",
+    "platform" : true
+  } ]
+}

@@ -1,0 +1,136 @@
+{
+  "name" : "KnowledgeContainer",
+  "description" : "Plan-57 — named namespace for a knowledge corpus (e.g., '737 Knowledge', '767 Knowledge'). One row per container; container.folderId points at the dedicated Folder under the 'knowledge' folderType root. Files added to the container become File2(folderType='knowledge', sourceClass='KnowledgeContainer', sourceId=<containerId>). Downstream processing (RAG/pgvector via KnowledgeNode, RAG-graph via future KnowledgeLink) is outside the storage contract — a container just owns the bytes + supplies them to whichever ingestion pipeline runs over it. An agent may consume multiple containers, and a container may serve multiple agents; that binding lives outside this row. V1 ships the container + file association; container CRUD + ingestion pipeline ship in the parallel knowledge session. ACL is read-only via generic CRUD: container lifecycle (create / update / delete) goes through KnowledgeContainerController, which fires the ingestion triggers that direct CRUD would skip.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "0",
+    "description" : "Plan-57 — app this container belongs to. Stamped at create; immutable. SA-mode rows take the DDL default (0); MA-mode rows take the request's appId.",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Plan-57 — container owner (the user who created it). representsOwnership drives the ownership filter.",
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Plan-57 — display name for the container (e.g., '737 Knowledge'). Conventional uniqueness per (appId, tenantId) is enforced at the service layer; no composite index yet.",
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Plan-57 — free-form description of what this container holds.",
+    "platform" : true
+  }, {
+    "name" : "folderId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "description" : "Plan-57 — FK to the Folder row that holds this container's files. Created by the container-creation service alongside the row; immutable thereafter. File2 rows belonging to this container have folderId pointing here AND sourceClass='KnowledgeContainer', sourceId=<container.id>.",
+    "platform" : true
+  }, {
+    "name" : "processingTrigger",
+    "type" : "string",
+    "length" : 16,
+    "persistent" : true,
+    "defaultValue" : "manual",
+    "description" : "Plan-58 slice 58-B.3.3 — design-time choice for when files in this container get ingested. 'manual' (default, plan-58 revision 2026-06-11) = upload only marks the file ready; user explicitly triggers ingestion via POST /knowledge/containers/{id}/process or POST /knowledge/containers/{id}/documents/{fileId}/process. 'auto' = upload-succeeded immediately enqueues an ingest task. Auto was the original default but caused UX problems: uploading several documents fired one task and left the rest pending behind the one-active-task-per-container guard, looking stuck. The product now surfaces a manual 'N documents require processing — click to start' affordance instead. The auto path code remains (FileController.uploadSucceeded → triggerIngestion, gated on this field) for containers that explicitly opt in, but the default is manual.",
+    "platform" : true
+  }, {
+    "name" : "processingMode",
+    "type" : "string",
+    "length" : 16,
+    "persistent" : true,
+    "defaultValue" : "default",
+    "description" : "Plan-58 slice 58-B.3.3 — design-time choice for HOW files in this container get chunked + embedded. 'default' = page-level extraction via pdfplumber (slice 58-B.3.2 default pipeline). 'prompt' = LLM-driven semantic chunking using processingPrompt; LLM must return a JSON array of {text, embeddingText} maps. 'function' = a named FunctionM does the chunking (V2; V1 stubs raise FUNCTION_MODE_NOT_IMPLEMENTED).",
+    "platform" : true
+  }, {
+    "name" : "processingPrompt",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Plan-58 slice 58-B.3.3 — LLM prompt used when processingMode='prompt'. Author should explicitly instruct the model to return a JSON array of {text, embeddingText} maps (no prose, no fences); the pod parses with json.loads and surfaces JSON / shape errors as PROMPT_OUTPUT_INVALID_JSON. Ignored for other processingMode values.",
+    "platform" : true
+  }, {
+    "name" : "processingFunctionName",
+    "type" : "string",
+    "length" : 100,
+    "persistent" : true,
+    "description" : "Plan-58 slice 58-B.3.3 — FunctionM name used when processingMode='function'. V1 not yet implemented (the pod raises FUNCTION_MODE_NOT_IMPLEMENTED if invoked). Function contract when V2 lands: receives the file's text + container metadata, returns a list of {text, embeddingText} maps.",
+    "platform" : true
+  }, {
+    "name" : "taskId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "-1",
+    "description" : "Plan-58 — denormalized pointer to the most recent umbrella ingest-knowledge task for this container. Stamped when KnowledgeContainerService.processContainer enqueues an umbrella task; propagated by TaskRepository.updateResourceStatus as the task transitions. Per-file ingest tasks (resourceType='File2') intentionally do NOT update this pointer — that would flap rapidly during batch processing. Sentinel -1 means no umbrella ingest has ever fired.",
+    "platform" : true
+  }, {
+    "name" : "taskStatus",
+    "type" : "string",
+    "length" : 16,
+    "persistent" : true,
+    "readOnly" : true,
+    "description" : "Plan-58 — denormalized current status of the umbrella ingest-knowledge task referenced by taskId. Mirrors Task.status: PENDING / RUNNING / COMPLETED / FAILED / CANCELLED. Null until the first umbrella ingest fires. Matches the Activity.status propagation pattern (TaskRepository.updateResourceStatus).",
+    "platform" : true
+  }, {
+    "name" : "taskUpdatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "readOnly" : true,
+    "description" : "Plan-58 — millis epoch of the last taskStatus transition. Stamped at enqueue and at every propagation in TaskRepository.updateResourceStatus. UI uses this for the 'last updated' column on the container grid without needing to JOIN to task_tbl. The taskId/taskStatus/taskUpdatedAt triple reflects THE active task on this container — umbrella ingest, single-file ingest, or future multi-file batches all share the same pointer. At most one PENDING/RUNNING task exists per container at any time (enforced server-side at enqueue).",
+    "platform" : true
+  } ]
+}

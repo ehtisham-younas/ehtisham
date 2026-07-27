@@ -1,0 +1,109 @@
+{
+  "name" : "ScheduledJob",
+  "description" : "cap-map #11 — cron-scheduled function invocation. Platform-only: lives in schema0 only (like TaskQueue), a cross-app registry keyed by appId. The scheduler sweeper claims due rows (active AND nextFireAt <= now) with FOR UPDATE SKIP LOCKED and fires the function via the async task backbone run-as runAsUser. Managed by admins via /admin/scheduled-jobs (dataApi blocked; no generic CRUD).",
+  "platformOnly" : true,
+  "dataApi" : "open",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "functionName",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "params",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "runAsUser",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "createdByUserId",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "cronExpression",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "nextFireAt",
+    "type" : "biginteger",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "lastFiredAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "lastTaskId",
+    "type" : "biginteger",
+    "defaultValue" : "-1",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "allowOverlap",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "active",
+    "type" : "boolean",
+    "defaultValue" : "true",
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

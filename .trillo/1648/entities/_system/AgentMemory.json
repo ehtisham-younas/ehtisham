@@ -1,0 +1,123 @@
+{
+  "name" : "AgentMemory",
+  "description" : "Long-term agent memory entries (facts, preferences, skills, summaries). Each row has a pgvector embedding for RAG retrieval. Scoped per (idOfUser, agentName, tenantId) — UI agent's memories don't bleed into domain agents. Writes go through the save_memory() platform tool, not data_create. Used by the Generative UI agent runtime (plan-29).",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "user" : [ "create", "read", "update", "delete" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "uuid",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 64,
+    "indexed" : true,
+    "description" : "Plan-36 — parquet-friendly natural key. UUIDv4 set at INSERT (MemoryService when persisting via the save_memory tool). Stays stable for the row's lifetime. Used as the parquet primary key in future analytics dumps.",
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner of this memory entry. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "agentName",
+    "type" : "string",
+    "persistent" : true,
+    "indexed" : true,
+    "length" : 200,
+    "description" : "Scopes memory per-agent; UI agent's memory is separate from domain agents'",
+    "platform" : true
+  }, {
+    "name" : "kind",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 20,
+    "enumValues" : "fact,preference,skill,summary",
+    "description" : "Category of memory",
+    "platform" : true
+  }, {
+    "name" : "content",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "The memory itself, in natural language",
+    "platform" : true
+  }, {
+    "name" : "source",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 30,
+    "enumValues" : "user_stated,agent_inferred,conversation_summary",
+    "defaultValue" : "agent_inferred",
+    "description" : "Provenance",
+    "platform" : true
+  }, {
+    "name" : "sourceConversationId",
+    "type" : "long",
+    "persistent" : true,
+    "description" : "Optional back-link to the AgentConversation this memory was extracted from",
+    "platform" : true
+  }, {
+    "name" : "confidence",
+    "type" : "double",
+    "persistent" : true,
+    "description" : "Agent's self-rated confidence in this memory (0.0-1.0)",
+    "platform" : true
+  }, {
+    "name" : "lastAccessedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Updated on each retrieval — drives future LRU pruning",
+    "platform" : true
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Optional epoch-ms after which the memory stops being retrieved. NULL or 0 = never expires. Drives the WHERE clause in MemoryController.searchMemory.",
+    "platform" : true
+  }, {
+    "name" : "embedding",
+    "type" : "vector",
+    "length" : 768,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "pgvector embedding (gemini text-embedding-004 = 768 dimensions). HNSW index on the cosine operator class for similarity retrieval (<=> operator).",
+    "platform" : true
+  } ]
+}

@@ -1,0 +1,91 @@
+{
+  "name" : "VisitSummary",
+  "description" : "A concise summary of a patient's visit, often derived from their medical record.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "doctor" : [ "create", "read", "update" ],
+    "patient" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "representsOwnership" : true,
+    "createOnly" : true,
+    "description" : "Owning patient — set automatically on create from the authenticated user; only the owning patient or an admin/doctor may access this summary."
+  }, {
+    "name" : "patientId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The patient this visit summary belongs to."
+  }, {
+    "name" : "doctorId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The doctor who created this summary."
+  }, {
+    "name" : "appointmentId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "unique" : true,
+    "description" : "The appointment this summary is for."
+  }, {
+    "name" : "summaryDate",
+    "type" : "date",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The date the visit summary was created."
+  }, {
+    "name" : "summaryContent",
+    "type" : "text",
+    "required" : true,
+    "phi" : true,
+    "encrypt" : true,
+    "sensitive" : true,
+    "searchable" : true,
+    "listHidden" : true,
+    "description" : "The concise summary of the patient's visit."
+  }, {
+    "name" : "recommendations",
+    "type" : "text",
+    "phi" : true,
+    "listHidden" : true,
+    "description" : "Recommendations or next steps from the doctor."
+  }, {
+    "name" : "followUpDate",
+    "type" : "date",
+    "description" : "Suggested follow-up date."
+  } ]
+}

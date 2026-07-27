@@ -1,0 +1,94 @@
+{
+  "name" : "OAuthRefreshToken",
+  "description" : "Plan-32 C — long-lived refresh token issued at /token alongside the access token. Stored as SHA256 hash (tokenHash) — never the raw value — so a DB compromise doesn't leak live credentials. On refresh: rotate (issue a new RT + revoke the prior, set rotatedFromId) per OAuth 2.0 best practice §10.4. revokedAt enables explicit revocation and chain-cutoff on reuse-detection. Lifetime: 30 days. Lives in schema0 only (platformOnly).",
+  "dataApi" : "blocked",
+  "platformOnly" : true,
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tokenHash",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "SHA256(refresh_token) hex. The raw token is returned to the client at /token and never persisted server-side."
+  }, {
+    "name" : "clientId",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "required" : true,
+    "description" : "OAuth client the token was issued to. /token validates the presenter matches."
+  }, {
+    "name" : "userTenantId",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Tenant baked into the access tokens minted from this RT."
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "User baked into the access tokens minted from this RT."
+  }, {
+    "name" : "scope",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "Scopes carried forward from the original authorization. Cannot be widened on refresh."
+  }, {
+    "name" : "issuedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "required" : true,
+    "description" : "Epoch ms when this RT was created."
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Epoch ms. /token sets this to now + 30 days. Refresh resets to issuedAt + 30d (sliding window)."
+  }, {
+    "name" : "revokedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Epoch ms of revocation. Null while live. Set by (a) rotation on refresh, (b) explicit revoke, (c) reuse-detection cascade (a revoked RT being presented at /token revokes the whole chain — see rotatedFromId)."
+  }, {
+    "name" : "rotatedFromId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Parent RT row id when this token came from a refresh rotation. Lets /token walk the chain and revoke all descendants if a revoked RT is replayed."
+  } ]
+}

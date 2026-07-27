@@ -1,0 +1,8 @@
+{
+  "name" : "logPHIReadAccess",
+  "shortDescription" : "Records an audit log entry whenever a user accesses Protected Health Information (PHI).",
+  "description" : "<h4>Overview</h4><p>This function records a detailed audit log entry every time a user (patient, doctor, or admin) accesses Protected Health Information (PHI) from a <code>MedicalRecord</code>. This is crucial for compliance and security auditing.</p><h4>Intended use</h4><p>Called by the UI or other access points whenever PHI is viewed. Parameters include the <code>medicalRecordId</code> being accessed and the <code>userId</code> performing the access.</p><h4>Logic</h4><ol><li>Validate the <code>medicalRecordId</code> and the context of the access.</li><li>Retrieve the <code>MedicalRecord</code> using <code>ctx.data.get</code> to confirm its existence and type.</li><li>Create an audit log entry using <code>ctx.audit.log</code> with action 'PHI_READ_ACCESS', resourceType 'MedicalRecord', and resourceId of the accessed record.</li><li>Include contextual information such as the user's role, the specific PHI fields accessed (if granularly tracked), and the timestamp.</li><li>Return a success status.</li></ol><h4>Entities</h4><ul><li>MedicalRecord</li><li>AuditLog</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "patient", "doctor", "admin" ],
+  "functionName" : "log_phi_read_access"
+}

@@ -1,0 +1,80 @@
+{
+  "name" : "OutboundWebhook",
+  "description" : "Per-app outbound webhook target (plan-73). One row per external destination; managed by admins via the /admin/webhooks/outbound API. ACL admin-read; writes go through the dedicated controller. A function/agent sends to it via ctx.webhook.send(name, payload). The HMAC signing secret lives in AppSecret (signingSecretName), never here.",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "indexed" : true,
+    "unique" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "url",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "signingSecretName",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "headers",
+    "type" : "json",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "createdByUserId",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "text",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "active",
+    "type" : "boolean",
+    "defaultValue" : "true",
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

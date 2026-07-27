@@ -1,0 +1,168 @@
+{
+  "name" : "User",
+  "description" : "Platform user identity. One row per user with credentials, profile, terms-acceptance, login history, and global flags (approved, guest, whitelisted). Tenant access is via UserToTenant; identity is shared across tenants. ACL is admin-read only: admin can list users via the generic data API; create/update/delete and all non-admin access go through the dedicated /admin/users/* endpoints in UMController.",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "userId",
+    "type" : "string",
+    "indexed" : true,
+    "length" : 80,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "email",
+    "type" : "string",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "password",
+    "type" : "text",
+    "persistent" : true,
+    "hidden" : true,
+    "listHidden" : true,
+    "platform" : true
+  }, {
+    "name" : "mustChangePassword",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Forces password change on next login. Set true when admin is bootstrapped or reset by the platform."
+  }, {
+    "name" : "firstName",
+    "type" : "string",
+    "length" : 255,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "lastName",
+    "type" : "string",
+    "length" : 255,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "emailVerified",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "externalId",
+    "type" : "string",
+    "length" : 255,
+    "persistent" : true
+  }, {
+    "name" : "pictureUrl",
+    "type" : "string",
+    "length" : 255,
+    "persistent" : true
+  }, {
+    "name" : "mobilePhone",
+    "type" : "string",
+    "length" : 40,
+    "persistent" : true
+  }, {
+    "name" : "companyName",
+    "type" : "string",
+    "length" : 80,
+    "persistent" : true
+  }, {
+    "name" : "termsAgreed",
+    "type" : "boolean",
+    "persistent" : true
+  }, {
+    "name" : "termsAgreedAt",
+    "type" : "biginteger",
+    "persistent" : true
+  }, {
+    "name" : "privacyAgreed",
+    "type" : "boolean",
+    "persistent" : true
+  }, {
+    "name" : "privacyAgreedAt",
+    "type" : "biginteger",
+    "persistent" : true
+  }, {
+    "name" : "lastLoginAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "lastLoginTenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "approved",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "platform" : true
+  }, {
+    "name" : "guest",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "platform" : true
+  }, {
+    "name" : "system",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "platform" : true,
+    "description" : "System (service) user — runs scheduled/event/agent work non-interactively; no interactive login. Never superAdmin."
+  }, {
+    "name" : "loginUnavailable",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "platform" : true,
+    "description" : "Plan-74 — provisioned end-user that cannot log in yet (no password; accessed later via OTP / one-time link). Login rejects it. Distinct from system."
+  }, {
+    "name" : "whitelisted",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false
+  }, {
+    "name" : "role",
+    "type" : "string",
+    "persistent" : false,
+    "description" : "primary role of the user 'admin' or 'user'",
+    "platform" : true
+  }, {
+    "name" : "appRoles",
+    "type" : "string",
+    "persistent" : false,
+    "description" : "a comma separated list of custom roles",
+    "platform" : true
+  } ]
+}

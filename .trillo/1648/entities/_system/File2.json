@@ -1,0 +1,236 @@
+{
+  "name" : "File2",
+  "description" : "File metadata — one row per file with name, content type, size, folder, upload/processing status, and version generation. Bytes live in cloud storage (signed-URL path) or inline via FileContent (small files). ACL is read-only via generic CRUD: file lifecycle (upload-url, upload-succeeded, content save, delete) goes through FileController, which manages the storage side effects and RecordShare updates that direct CRUD would skip. Ownership filter still applies — callers see only their own files (or shared via RecordShare).",
+  "ownership" : "user",
+  "shareTable" : "RecordShare",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "tableName" : "file_tbl",
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "folderId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "fileName",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "File name including its path where applicable",
+    "platform" : true
+  }, {
+    "name" : "contentType",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "uploadStatus",
+    "type" : "string",
+    "persistent" : true,
+    "defaultValue" : "not_uploaded",
+    "platform" : true
+  }, {
+    "name" : "size",
+    "type" : "long",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "visibility",
+    "type" : "integer",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "tnUrl",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Thumbnail url",
+    "platform" : true
+  }, {
+    "name" : "generation",
+    "type" : "long",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "metageneration",
+    "type" : "long",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "versionsCount",
+    "type" : "integer",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "fileCreatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "documentType",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Application specific type such as legal, PO, SoftwareRequirement",
+    "platform" : true
+  }, {
+    "name" : "locked",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "contentId",
+    "type" : "long",
+    "persistent" : true,
+    "defaultValue" : "-1",
+    "description" : "File content id",
+    "platform" : true
+  }, {
+    "name" : "agentId",
+    "type" : "long",
+    "persistent" : true,
+    "description" : "Agent that may be responsible for creation of this document",
+    "platform" : true
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "message",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "storeByName",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "If true, file stored on bucket with original name. If false (default), stored as {id}.{extension}.",
+    "platform" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "0",
+    "description" : "Plan-57 — app this file belongs to (schema selector). Stamped at create; immutable. SA-mode rows take the DDL default (0); MA-mode rows take the request's appId.",
+    "platform" : true
+  }, {
+    "name" : "sourceClass",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Plan-57 — business entity this file is bound to (e.g., 'AgentMessage', 'AppConfig', 'Agent'). NULL when standalone. Not validated server-side. Paired with sourceId for the index lookup '(sourceClass, sourceId) -> files'.",
+    "platform" : true
+  }, {
+    "name" : "sourceId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : "-1",
+    "description" : "Plan-57 — id of the business entity named in sourceClass. -1 means standalone or pending (uploaded but not yet associated; AgentMessage attachments use -1 until the user submits the prompt).",
+    "platform" : true
+  }, {
+    "name" : "publicAccess",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "Plan-57 — true if the file lives under the pub/ bucket prefix (anonymous read via a stable URL). Defaults from the folderType catalog / parent folder; per-file override allowed.",
+    "platform" : true
+  }, {
+    "name" : "bucketPath",
+    "type" : "string",
+    "length" : 2048,
+    "persistent" : true,
+    "createOnly" : true,
+    "description" : "Plan-57 — full bucket key (relative to the bucket root) where this file's bytes live. Stamped at create; immutable across folder rename / move. NULL on rows from before plan-57; BaseFileService.resolveBucketPath falls back to the legacy folder-ancestry-derived path in that case.",
+    "platform" : true
+  }, {
+    "name" : "signedFileUri",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "Plan-57 — cached external file-reference URI returned by a model provider's Files API (e.g., Gemini's 'files/abc123...'). Generic across providers so future model integrations can reuse the slot. NULL when not yet uploaded or after expiry. Refreshed by the pod when the cached URI is within ~5 minutes of signedFileExpiresAt.",
+    "platform" : true
+  }, {
+    "name" : "signedFileExpiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Plan-57 — epoch ms when the cached signedFileUri stops being usable. Set by the pod at upload time (e.g., Gemini Files API retains for 48h after upload). Pod compares against now() before reusing the URI.",
+    "platform" : true
+  }, {
+    "name" : "processingStatus",
+    "type" : "string",
+    "length" : 16,
+    "indexed" : true,
+    "persistent" : true,
+    "defaultValue" : "pending",
+    "description" : "Plan-58 slice 58-B.3.3 — knowledge ingestion lifecycle. 'pending' = upload-succeeded recorded but not yet processed. 'processing' = task in flight. 'processed' = chunks + embeddings persisted; indexedAt is set. 'failed' = pod returned an error; details in the task event log. Manual-trigger 'process container' calls skip rows in 'processed' unless force=true. Currently meaningful only for files in containers with folderType='knowledge'; other files leave this at the default 'pending'.",
+    "platform" : true
+  }, {
+    "name" : "indexedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Plan-58 slice 58-B.3.3 — epoch ms when this file's ingestion finished successfully (processingStatus → 'processed'). NULL otherwise. Set by the ingest processor on terminal-done. Re-ingestion (force=true) updates this in place.",
+    "platform" : true
+  }, {
+    "name" : "uploadedBy",
+    "type" : "long",
+    "persistent" : true,
+    "defaultValue" : "-1",
+    "description" : "Plan-72 — the user who actually uploaded the file. For a drop-box upload idOfUser holds the drop-box owner, so this preserves who dropped it (audit + upload-confirm authz). -1 when not recorded (normal uploads).",
+    "platform" : true
+  }, {
+    "name" : "purpose",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "Plan-75 — denormalized from the folder's purpose at upload so the read gate decides without a folder lookup. \"common\" = readable by any authenticated user; null = default owner-private rules.",
+    "platform" : true
+  } ]
+}

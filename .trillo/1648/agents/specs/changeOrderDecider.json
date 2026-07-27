@@ -1,0 +1,45 @@
+{
+  "name" : "changeOrderDecider",
+  "description" : "<h4>Overview</h4><p>This agent is responsible for processing decisions made on a Change Order. Upon approval, it orchestrates the necessary updates to the associated Project's financial balance, materializes new work or product order line items, and notifies the customer.</p><h4>Behavior</h4><p>The agent acts as a transactional orchestrator. When invoked with an approved Change Order, it ensures the Project's <code>balanceDue</code> is accurately recalculated, incorporating the approved changes and taxes while avoiding double-counting deposits. It then translates approved Labor line items into Work Order scope and Product line items into Product Order Line Items under a draft holding order. The customer is automatically notified of the decision. The agent is designed to prevent re-processing of already decided Change Orders, returning an error (409 conflict) if attempted. It specifically does not alter the <code>WorkOrder.total</code> as this is managed separately for installer payments.</p><h4>Examples</h4><p>When a ChangeOrder with ID 'CO-456' is marked as 'Approved', the agent is invoked. It updates <code>Project</code> 'P-101's <code>balanceDue</code>, creates relevant <code>ProductOrderLineItem</code>s and <code>WorkOrder</code> entries, and sends an email to the customer associated with <code>Project</code> 'P-101'. The agent then returns a success confirmation.</p><h4>Domain knowledge</h4><p>Understands the relationships between <code>ChangeOrder</code>, <code>Project</code>, <code>ChangeOrderLineItem</code>, <code>ProductOrder</code>, <code>ProductOrderLineItem</code>, <code>WorkOrder</code>, and <code>Customer</code>. Knows the financial calculation logic for <code>Project.balanceDue</code> and the implications of different <code>ChangeOrder</code> statuses. Aware that <code>WorkOrder.total</code> is distinct from <code>Project.balanceDue</code>.</p>",
+  "invocationMode" : "task",
+  "kind" : "codeful",
+  "role" : "user",
+  "outputFormat" : "json",
+  "outputExample" : {
+    "status" : "success",
+    "changeOrderId" : "CO-123",
+    "action" : "approved",
+    "message" : "Change Order CO-123 approved and processed successfully."
+  },
+  "outputSchema" : {
+    "type" : "object",
+    "properties" : {
+      "status" : {
+        "type" : "string",
+        "description" : "The outcome of the operation, e.g., 'success' or 'failure'."
+      },
+      "changeOrderId" : {
+        "type" : "string",
+        "description" : "The ID of the Change Order that was processed."
+      },
+      "action" : {
+        "type" : "string",
+        "description" : "The action performed, e.g., 'approved' or 'rejected'."
+      },
+      "message" : {
+        "type" : "string",
+        "description" : "A descriptive message about the result of the operation."
+      },
+      "errorCode" : {
+        "type" : "string",
+        "description" : "Optional: An error code if the operation failed."
+      },
+      "details" : {
+        "type" : "string",
+        "description" : "Optional: Additional details about the outcome or error."
+      }
+    },
+    "required" : [ "status", "changeOrderId", "action", "message" ]
+  },
+  "discoveredTools" : [ "fn:decideChangeOrder" ]
+}

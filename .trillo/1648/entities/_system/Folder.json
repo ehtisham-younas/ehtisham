@@ -1,0 +1,150 @@
+{
+  "name" : "Folder",
+  "description" : "Hierarchical folder for organizing files. Each row has a name, an optional parentFolderId, and ancestor data for fast tree queries. Folders may be platform-managed (internal) or user-created. ACL is read-only via generic CRUD: folder lifecycle goes through FileController (create-folder, rename, delete), which maintains the ancestor data and folderType invariants that direct CRUD would corrupt.",
+  "ownership" : "user",
+  "shareTable" : "RecordShare",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "parentFolderId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "ancestorIds",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "array" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Folder name",
+    "platform" : true
+  }, {
+    "name" : "folderType",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Type in Trillo such as 'gen_ai'. This is also use to create subfolder within tenant folder",
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "internal",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "A folder marked internal is not included in the folder-tree",
+    "platform" : true
+  }, {
+    "name" : "generation",
+    "type" : "long",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "metageneration",
+    "type" : "long",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "versionsCount",
+    "type" : "integer",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "0",
+    "description" : "Plan-57 — app this folder belongs to (schema selector). Stamped at create from the request's appId; immutable. In MA mode this is part of the bucket prefix; in SA mode it stays 0 (the DDL default).",
+    "platform" : true
+  }, {
+    "name" : "bucketPath",
+    "type" : "string",
+    "length" : 2048,
+    "persistent" : true,
+    "createOnly" : true,
+    "description" : "Plan-57 — full bucket-relative prefix for this folder's contents. Stamped at create; immutable across rename / move. New files take {bucketPath}/{fileId}.{ext}. NULL on rows created before plan-57; BaseFileService.resolveBucketPath falls back to the legacy folder-ancestry-derived path in that case.",
+    "platform" : true
+  }, {
+    "name" : "managed",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "Plan-57 — true only for folders under a managed-document tree (the UI navigates these). Defaults from the folderType catalog at create time.",
+    "platform" : true
+  }, {
+    "name" : "publicAccess",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "Plan-57 — true if files in this folder live under the pub/ bucket prefix (anonymous read). Defaults from the folderType catalog at create time; per-folder override possible.",
+    "platform" : true
+  }, {
+    "name" : "dropbox",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "description" : "Plan-72 — drop-box folder: any permitted user (incl. guest) may upload; files are owned by the folder owner (not the uploader) and only the owner (later, folder-share grantees) can read them. Mutually exclusive with publicAccess.",
+    "platform" : true
+  }, {
+    "name" : "purpose",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "Plan-75 — semantic folder purpose driving upload/read access. null = default (owner-private). \"common\" = any authenticated user uploads (owner = folder owner) and any authenticated user reads. Mutually exclusive with dropbox (dropbox wins). Subfolders inherit it. Custom behavior is delegated to a function, not more built-in purposes.",
+    "platform" : true
+  } ]
+}

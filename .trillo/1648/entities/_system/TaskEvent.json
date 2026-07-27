@@ -1,0 +1,61 @@
+{
+  "name" : "TaskEvent",
+  "description" : "Event timeline for a Task. Each row records a state transition or progress message at a specific timestamp. Drives task progress UIs and post-mortem inspection. ACL is read-only via generic CRUD: events are emitted by TaskService and the scheduler — direct writes would forge the lifecycle stream.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner — denormalized from the parent Task (52-D doc). Populated by the task runtime on event publish. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "taskId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "conversationId",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true,
+    "description" : "Agent conversation id (cid) this event belongs to, when the task is an agent turn; null for functions. Lets events be traced across all of a conversation's turn-tasks."
+  }, {
+    "name" : "timestamp",
+    "type" : "timestamptz",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "type",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "message",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

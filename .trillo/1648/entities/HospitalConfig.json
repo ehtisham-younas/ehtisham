@@ -1,0 +1,70 @@
+{
+  "name" : "HospitalConfig",
+  "description" : "System-wide configurable settings for the hospital, such as operating hours, holidays, and policies.",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "doctor" : [ "read" ],
+    "patient" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "settingName",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "unique" : true,
+    "naming" : true,
+    "searchable" : true,
+    "description" : "The unique name of the configuration setting."
+  }, {
+    "name" : "settingValue",
+    "type" : "text",
+    "required" : true,
+    "description" : "The value of the configuration setting."
+  }, {
+    "name" : "description",
+    "type" : "text",
+    "searchable" : true,
+    "listHidden" : true,
+    "description" : "A description of what the setting controls."
+  }, {
+    "name" : "dataType",
+    "type" : "string",
+    "length" : 50,
+    "enumValues" : "string,integer,boolean,json,date,time",
+    "defaultValue" : "string",
+    "description" : "The expected data type of the settingValue."
+  }, {
+    "name" : "category",
+    "type" : "string",
+    "length" : 100,
+    "indexed" : true,
+    "description" : "A category to group related settings (e.g., 'OperatingHours', 'Policies')."
+  } ]
+}

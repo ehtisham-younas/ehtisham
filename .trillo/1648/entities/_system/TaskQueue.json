@@ -1,0 +1,106 @@
+{
+  "name" : "TaskQueue",
+  "description" : "Plan-31 — platform work-list. One row per task that needs processing, regardless of which app/tenant owns the underlying record. The SharedTaskQueue sweeper claims rows here and dispatches to processors after rebinding to the row's (appId, tenantId). Lives in schema0 only (see platformOnly flag). The detailed Task record (params, results, retry history) stays in the per-app/per-tenant Task class. Plan-55: taskAppId selects the schema where the Task row lives; taskTenantId pins the RLS row scope so the processor sees only the originating tenant's data in MA-MT.",
+  "platformOnly" : true,
+  "dataApi" : "blocked",
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "taskId",
+    "type" : "biginteger",
+    "persistent" : true,
+    "required" : true,
+    "description" : "Id of the row in schema{tenantId}.task_tbl. FK-in-spirit only — not enforced as a constraint because the target lives in another schema."
+  }, {
+    "name" : "taskAppId",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "defaultValue" : "-1",
+    "description" : "Plan-55 — app (schema) that owns the underlying Task. The worker uses this as the schema selector: SET search_path TO schema<taskAppId>. Distinct from taskTenantId in MA-MT, where multiple tenants share one app schema. Named taskAppId (not the bare appId) to avoid collision with the platform's appId convention (JWT claim, AppFilter binding)."
+  }, {
+    "name" : "taskTenantId",
+    "type" : "long",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "defaultValue" : "-1",
+    "description" : "Plan-55 — tenant (row scope) that owns the underlying Task. The worker uses this as the RLS pin: SET app.tenant_id = <taskTenantId>. In MA-ST this equals taskAppId; in MA-MT they diverge (taskAppId selects the schema, taskTenantId scopes rows within it). Named taskTenantId — not the bare tenantId — to avoid collision with the platform's tenant_id convention."
+  }, {
+    "name" : "type",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Mirrors the per-tenant Task.type — drives which SharedTaskQueue worker pool claims this row."
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "length" : 32,
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "PENDING | RUNNING | COMPLETED | FAILED. The claim query filters on (type, status, nextRunAt). The platform metadata only emits single-column indexes; a composite partial index for the hot claim path is a follow-up DDL migration."
+  }, {
+    "name" : "workerId",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "description" : "Set on claim; identifies the SharedTaskQueue instance currently processing the row."
+  }, {
+    "name" : "retryCount",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : "0"
+  }, {
+    "name" : "maxRetries",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : "0",
+    "description" : "Per-task-type retry budget. Set by the enqueuing service (agent-exec=0, fn-exec=3, workflow uses existing pattern)."
+  }, {
+    "name" : "nextRunAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Epoch ms. null = run now. Failure path sets a future timestamp for exponential backoff."
+  }, {
+    "name" : "lastPing",
+    "type" : "biginteger",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Worker liveness signal for stuck-task detection."
+  }, {
+    "name" : "errorSummary",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Last failure reason (one-line). Full error_trace lives on the per-tenant Task row."
+  } ]
+}

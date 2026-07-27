@@ -1,0 +1,123 @@
+{
+  "name" : "Email",
+  "description" : "Record of an email sent through the platform. Tracks sender, recipients, subject, content, timestamp, and threading metadata for delivery audits and reply correlation. dataApi is blocked — the row contains PII (recipient addresses, subject, body) and the generic data API is not a sanctioned read path. Admin operational visibility (send, usage, lookup) goes through AppEmailController.",
+  "dataApi" : "open",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Sender — id of user who initiated this email. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "topicId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "msgId",
+    "type" : "string",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Email msg id",
+    "platform" : true
+  }, {
+    "name" : "threadId",
+    "type" : "string",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Email thread id",
+    "platform" : true
+  }, {
+    "name" : "sender",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "senderFullName",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "toRecipient",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "ccRecipient",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "bccRecipient",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "subject",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "content",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "msgTimestamp",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "date and time of the email",
+    "platform" : true
+  }, {
+    "name" : "isReplied",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "isEdited",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

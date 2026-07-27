@@ -1,0 +1,8 @@
+{
+  "name" : "processInsuranceClaim",
+  "shortDescription" : "Processes insurance claims related to completed appointments with an external insurance platform.",
+  "description" : "<h4>Overview</h4><p>This function integrates with an external insurance platform to process claims for completed appointments. It gathers necessary patient and appointment details and submits them to the insurance provider.</p><h4>Intended use</h4><p>Invoked as an event handler, typically after an <code>Appointment</code> status changes to 'completed'. It automates the submission of insurance claims.</p><h4>Logic</h4><ol><li>Receive event data indicating a completed <code>Appointment</code>.</li><li>Retrieve the <code>Appointment</code> and associated <code>Patient</code> records using <code>ctx.data.get</code>.</li><li>Gather all required information for the insurance claim (e.g., patient demographics, appointment details, services rendered).</li><li>Transform the data into the format expected by the <code>InsurancePlatform</code>.</li><li>Make an authenticated API call to the <code>InsurancePlatform</code> using <code>ctx.service('InsurancePlatform')</code> to submit the claim.</li><li>Handle potential API errors and log the claim submission attempt and its outcome using <code>ctx.audit.log</code>.</li><li>Return a success or failure status.</li></ol><h4>Entities</h4><ul><li>Appointment</li><li>Patient</li><li>AuditLog</li></ul><h4>External Services</h4><ul><li>InsurancePlatform</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "process_insurance_claim"
+}

@@ -1,0 +1,70 @@
+{
+  "name" : "WebhookEvent",
+  "description" : "Idempotency record for received webhook events (cap-map #16). Internal — written by the webhook receiver, deduped by the unique dedupeKey (provider:eventId). dataApi blocked; not user-managed.",
+  "dataApi" : "open",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "dedupeKey",
+    "type" : "string",
+    "indexed" : true,
+    "unique" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "provider",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "eventId",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "receivedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

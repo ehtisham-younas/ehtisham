@@ -1,0 +1,74 @@
+{
+  "name" : "AppRole",
+  "description" : "Application-defined role for fine-grained authorization within a tenant (e.g., 'editor', 'reviewer'). Assigned to users via UserToAppRoleToTenant. ACL is admin-read only: role definitions are managed at deploy time or through dedicated /admin endpoints.",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "canSignUp",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "platform" : true,
+    "description" : "Onboarding policy, populated from the OnboardingMatrix on deploy. Whether a self-service signup may request this role. Nullable; read null as false (deny)."
+  }, {
+    "name" : "canBeInvited",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "false",
+    "platform" : true,
+    "description" : "Onboarding policy, populated from the OnboardingMatrix on deploy. Whether an admin may invite a user into this role. Nullable; read null as false (deny)."
+  }, {
+    "name" : "requiresApproval",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : "true",
+    "platform" : true,
+    "description" : "Onboarding policy, populated from the OnboardingMatrix on deploy. Whether signup/invite into this role needs admin approval before activation. Nullable; read null as true (safe)."
+  } ]
+}

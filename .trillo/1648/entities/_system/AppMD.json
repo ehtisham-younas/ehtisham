@@ -1,0 +1,98 @@
+{
+  "name" : "AppMD",
+  "description" : "App Metadata document: design-time, app-level domain metadata (enums, lookup tables, schema fragments, configuration JSON) that drives metadata-driven programming and is consumed by the app's functions and agents. Authored in Trillo AI and moved to the app's backend on deploy (like classes/functions/agents — not file/bucket storage; content lives inline in the DB, a few MB max). Organized as a tree via a materialized 'path' (folders are implicit in the path; there is no folder table). Uniqueness is (appId, path, name). Read-only via generic CRUD; authoring goes through the App Metadata endpoints.",
+  "ownership" : "user",
+  "tableName" : "app_md_tbl",
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "appId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "readOnly" : true,
+    "defaultValue" : "0",
+    "description" : "App this document belongs to. Stamped on deploy/create; immutable.",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Document owner (author). Drives the row-level ownership filter.",
+    "platform" : true
+  }, {
+    "name" : "path",
+    "type" : "string",
+    "length" : 500,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Materialized folder path, '/'-separated (e.g. 'lookups/geo'). Defines the tree; folders are implicit. Empty = root; a single segment = one level. Listed by exact match (a folder) or prefix (a subtree).",
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Document name, unique within its path. The full address is path/name (e.g. 'lookups/geo/countries').",
+    "platform" : true
+  }, {
+    "name" : "contentType",
+    "type" : "string",
+    "length" : 100,
+    "persistent" : true,
+    "defaultValue" : "application/json",
+    "description" : "MIME type of the content (application/json | text/csv | text/plain). Drives the editor mode and how the content is parsed at runtime.",
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Optional one-line description of the document.",
+    "platform" : true
+  }, {
+    "name" : "content",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "The metadata body, stored inline in the DB (a few MB max). JSON/CSV/text per contentType.",
+    "platform" : true
+  } ]
+}

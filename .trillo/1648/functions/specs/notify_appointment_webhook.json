@@ -1,0 +1,8 @@
+{
+  "name" : "notifyAppointmentWebhook",
+  "shortDescription" : "Sends real-time webhook notifications to external systems for appointment-related events.",
+  "description" : "<h4>Overview</h4><p>This function sends real-time webhook notifications to configured external systems whenever significant events occur related to <code>Appointment</code> entities (creation, update, cancellation).</p><h4>Intended use</h4><p>Invoked as an event handler, specifically on 'post-save' events for the <code>Appointment</code> entity. It ensures external systems are immediately aware of appointment lifecycle changes.</p><h4>Logic</h4><ol><li>Receive event data containing the <code>Appointment</code> record and the type of event (create, update, delete).</li><li>Format the <code>Appointment</code> data into a JSON payload suitable for the webhook.</li><li>Send the webhook notification to the configured <code>OutboundWebhook</code> endpoint using <code>ctx.webhook.send</code>.</li><li>Log the webhook delivery attempt and its outcome using <code>ctx.audit.log</code>.</li><li>Return a success or failure status.</li></ol><h4>Entities</h4><ul><li>Appointment</li><li>AuditLog</li></ul><h4>External Services</h4><ul><li>OutboundWebhook</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "notify_appointment_webhook"
+}

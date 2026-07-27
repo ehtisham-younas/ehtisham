@@ -1,0 +1,8 @@
+{
+  "name" : "syncEHRData",
+  "shortDescription" : "Synchronizes patient and medical record data with an external EHR system using RESTful/FHIR APIs.",
+  "description" : "<h4>Overview</h4><p>This function integrates with an external Electronic Health Record (EHR) system to synchronize patient and medical record data. It supports data exchange using RESTful and FHIR-based APIs to maintain consistency across systems.</p><h4>Intended use</h4><p>Invoked as an event handler, typically after an <code>Appointment</code> or <code>MedicalRecord</code> is created or updated within the HMP. It ensures that changes in HMP are reflected in the EHR system.</p><h4>Logic</h4><ol><li>Receive event data containing details of the changed <code>Patient</code>, <code>MedicalRecord</code>, or <code>Appointment</code>.</li><li>Transform the HMP data structure into the format required by the external EHR system (e.g., FHIR resources).</li><li>Make an authenticated API call to the <code>EHRSystem</code> using <code>ctx.service('EHRSystem')</code> to create or update the corresponding records.</li><li>Handle potential API errors and log the synchronization attempt and its outcome using <code>ctx.audit.log</code>.</li><li>Return a success or failure status.</li></ol><h4>Entities</h4><ul><li>Patient</li><li>MedicalRecord</li><li>Appointment</li><li>AuditLog</li></ul><h4>External Services</h4><ul><li>EHRSystem</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "sync_ehr_data"
+}

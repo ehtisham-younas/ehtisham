@@ -1,0 +1,8 @@
+{
+  "name" : "queryMedicalRecord",
+  "shortDescription" : "Retrieves a patient's medical record or specific parts of it, ensuring authorized access.",
+  "description" : "<h4>Overview</h4><p>This function retrieves a patient's medical record or specific sections thereof, ensuring that only authorized users (the patient themselves, their assigned doctor, or an administrator) can access the information.</p><h4>Intended use</h4><p>Called by the patient or doctor UI to view medical history. Parameters include <code>patientId</code>, and optional filters like <code>recordType</code> or a <code>dateRange</code>.</p><h4>Logic</h4><ol><li>Validate <code>patientId</code> and ensure the calling user has appropriate permissions (e.g., is the patient, an assigned doctor, or an admin).</li><li>Query the <code>MedicalRecord</code> entity using <code>ctx.data.query</code>, filtering by <code>patientId</code> and any additional criteria like <code>recordType</code> or <code>recordDate</code> range.</li><li>Optionally, retrieve associated <code>Patient</code> and <code>Doctor</code> information using <code>ctx.data.get</code>.</li><li>Return the list of matching <code>MedicalRecord</code> entries.</li></ol><h4>Entities</h4><ul><li>MedicalRecord</li><li>Patient</li><li>Doctor</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "patient", "doctor", "admin" ],
+  "functionName" : "query_medical_record"
+}

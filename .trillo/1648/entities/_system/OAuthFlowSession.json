@@ -1,0 +1,94 @@
+{
+  "name" : "OAuthFlowSession",
+  "description" : "Plan-32 C — short-lived row that holds OAuth Authorization-Code-flow state from /authorize through /consent. Keyed by the OAuth `state` parameter the client provided. Stores PKCE challenge + redirect_uri so /token can validate them later. tenantId is filled in after the workspace picker; idOfUser is filled in after login. Auto-expires after 5 minutes via the expiresAt column (query-time filter). Lives in schema0 only (platformOnly).",
+  "dataApi" : "blocked",
+  "platformOnly" : true,
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "state",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "OAuth `state` parameter from the client — used as the session lookup key. Opaque from the server's perspective; treated as case-sensitive."
+  }, {
+    "name" : "clientId",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "required" : true,
+    "description" : "OAuth client identifier from /authorize."
+  }, {
+    "name" : "redirectUri",
+    "type" : "string",
+    "length" : 512,
+    "persistent" : true,
+    "required" : true,
+    "description" : "Where /consent redirects back to. Must match the redirect_uri sent to /token (exact-match validation prevents token leakage to attacker-controlled URIs)."
+  }, {
+    "name" : "codeChallenge",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "PKCE code_challenge (RFC 7636). Validated against code_verifier at /token."
+  }, {
+    "name" : "codeChallengeMethod",
+    "type" : "string",
+    "length" : 16,
+    "persistent" : true,
+    "description" : "PKCE method — usually `S256`. `plain` accepted but discouraged."
+  }, {
+    "name" : "scope",
+    "type" : "string",
+    "length" : 256,
+    "persistent" : true,
+    "description" : "Requested OAuth scopes. v1: single `mcp` scope."
+  }, {
+    "name" : "userTenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "Tenant the user selected at the workspace picker. Null until step 3 of the flow (POST /oauth/select-tenant). Named userTenantId — not tenantId — to avoid collision with the platform's implicit multi-tenancy column."
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "User who authenticated. Null until step 5 (after login)."
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "required" : true,
+    "indexed" : true,
+    "description" : "Epoch ms. /authorize sets this to now + 5 minutes. All reads include `expiresAt > now()` so expired rows are invisible without an explicit cleanup pass."
+  } ]
+}

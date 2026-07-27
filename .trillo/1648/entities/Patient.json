@@ -1,0 +1,136 @@
+{
+  "name" : "Patient",
+  "description" : "Personal and contact information for a patient, linked to a system user.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "patient" : [ "read", "update" ],
+    "doctor" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "representsOwnership" : true,
+    "createOnly" : true,
+    "description" : "Owning user — set automatically on create from the authenticated user; only the owning patient or an admin may update or delete their profile."
+  }, {
+    "name" : "firstName",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "pii" : true,
+    "naming" : true,
+    "searchable" : true,
+    "description" : "The patient's first name."
+  }, {
+    "name" : "lastName",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "pii" : true,
+    "naming" : true,
+    "searchable" : true,
+    "description" : "The patient's last name."
+  }, {
+    "name" : "dateOfBirth",
+    "type" : "date",
+    "required" : true,
+    "pii" : true,
+    "description" : "The patient's date of birth."
+  }, {
+    "name" : "gender",
+    "type" : "string",
+    "length" : 50,
+    "pii" : true,
+    "enumValues" : "Male,Female,Other,Prefer not to say",
+    "description" : "The patient's gender."
+  }, {
+    "name" : "contactEmail",
+    "type" : "string",
+    "length" : 255,
+    "unique" : true,
+    "pii" : true,
+    "pattern" : "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+    "description" : "The patient's primary contact email address."
+  }, {
+    "name" : "phoneNumber",
+    "type" : "string",
+    "length" : 20,
+    "pii" : true,
+    "description" : "The patient's primary phone number."
+  }, {
+    "name" : "address",
+    "type" : "text",
+    "pii" : true,
+    "listHidden" : true,
+    "description" : "The patient's physical address."
+  }, {
+    "name" : "emergencyContactName",
+    "type" : "string",
+    "length" : 100,
+    "pii" : true,
+    "description" : "Name of the patient's emergency contact."
+  }, {
+    "name" : "emergencyContactPhone",
+    "type" : "string",
+    "length" : 20,
+    "pii" : true,
+    "description" : "Phone number of the patient's emergency contact."
+  }, {
+    "name" : "ehrId",
+    "type" : "string",
+    "length" : 50,
+    "unique" : true,
+    "indexed" : true,
+    "appKey" : true,
+    "description" : "External Electronic Health Record (EHR) system identifier for the patient."
+  }, {
+    "name" : "bloodType",
+    "type" : "string",
+    "length" : 10,
+    "phi" : true,
+    "enumValues" : "A+,A-,B+,B-,AB+,AB-,O+,O-",
+    "description" : "The patient's blood type."
+  }, {
+    "name" : "allergies",
+    "type" : "text",
+    "phi" : true,
+    "listHidden" : true,
+    "description" : "List of known patient allergies."
+  }, {
+    "name" : "medications",
+    "type" : "text",
+    "phi" : true,
+    "listHidden" : true,
+    "description" : "List of current medications the patient is taking."
+  } ]
+}

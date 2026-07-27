@@ -1,0 +1,8 @@
+{
+  "name" : "queryDoctorSchedule",
+  "shortDescription" : "Retrieves a doctor's availability schedule for a given period.",
+  "description" : "<h4>Overview</h4><p>This function retrieves the availability schedule for a specific doctor over a defined period, allowing patients to find available slots and doctors to view their own schedule.</p><h4>Intended use</h4><p>Called by the patient or doctor UI to display a doctor's calendar. Parameters include <code>doctorId</code>, <code>startDate</code>, and <code>endDate</code>.</p><h4>Logic</h4><ol><li>Validate <code>doctorId</code>, <code>startDate</code>, and <code>endDate</code> parameters.</li><li>Query the <code>DoctorSchedule</code> entity using <code>ctx.data.query</code>, filtering by <code>doctorId</code> and a date range between <code>startDate</code> and <code>endDate</code>.</li><li>Optionally, retrieve associated <code>Doctor</code> information using <code>ctx.data.get</code>.</li><li>Return a list of <code>DoctorSchedule</code> entries.</li></ol><h4>Entities</h4><ul><li>DoctorSchedule</li><li>Doctor</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "patient", "doctor", "admin" ],
+  "functionName" : "query_doctor_schedule"
+}

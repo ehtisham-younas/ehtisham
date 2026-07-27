@@ -1,0 +1,8 @@
+{
+  "name" : "syncLISData",
+  "shortDescription" : "Exchanges lab results and updates medical records with an external LIS (Laboratory Information System).",
+  "description" : "<h4>Overview</h4><p>This function integrates with an external Laboratory Information System (LIS) to exchange lab results and update patient medical records within the HMP. It ensures that diagnostic information is accurately reflected.</p><h4>Intended use</h4><p>Invoked as an event handler, typically after a <code>MedicalRecord</code> (e.g., a lab order) is created or updated, or when new lab results are received from the LIS. It pushes or pulls relevant data.</p><h4>Logic</h4><ol><li>Receive event data related to a <code>MedicalRecord</code>, specifically for lab results.</li><li>Transform the HMP data structure into the format required by the external LIS or parse incoming LIS data.</li><li>Make an authenticated API call to the <code>LISSystem</code> using <code>ctx.service('LISSystem')</code> to exchange lab results.</li><li>Update the relevant <code>MedicalRecord</code> entries with new lab results using <code>ctx.data.update</code>.</li><li>Handle potential API errors and log the synchronization attempt and its outcome using <code>ctx.audit.log</code>.</li><li>Return a success or failure status.</li></ol><h4>Entities</h4><ul><li>MedicalRecord</li><li>AuditLog</li></ul><h4>External Services</h4><ul><li>LISSystem</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "sync_lis_data"
+}

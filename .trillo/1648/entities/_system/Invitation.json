@@ -1,0 +1,104 @@
+{
+  "name" : "Invitation",
+  "description" : "Pending invitation for a new user to join a tenant. Carries an invitation token, expiry, intended role, and used/revoked flags. Created when an admin invites someone via email.",
+  "dataApi" : "open",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "inviterId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "inviterTenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "token",
+    "type" : "string",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "inviterEmail",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "inviteeEmail",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "email of the person who is invited",
+    "platform" : true
+  }, {
+    "name" : "expirySeconds",
+    "type" : "integer",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "used",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "usedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "revoked",
+    "type" : "boolean",
+    "defaultValue" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "role",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "User's role",
+    "platform" : true
+  }, {
+    "name" : "appRoles",
+    "type" : "string",
+    "length" : 1000,
+    "persistent" : true,
+    "description" : "Comma-separated app roles to assign the invitee on acceptance",
+    "platform" : true
+  } ]
+}

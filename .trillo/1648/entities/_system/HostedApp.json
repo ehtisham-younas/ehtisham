@@ -1,0 +1,99 @@
+{
+  "name" : "HostedApp",
+  "description" : "A Trillo AOS hosted application. One row per deployed app, tracking the admin user, deployment task and status, last-accessed timestamp, and deploy message. The per-app metadata anchor.",
+  "dataApi" : "tenant-0-only",
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Same as app's ID in Trillo AI"
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 255,
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true,
+    "description" : "App name (unique)"
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "platform" : true,
+    "description" : "pending, active, suspended, deleted"
+  }, {
+    "name" : "adminUserId",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Boot admin's userId in the app's schema"
+  }, {
+    "name" : "lastAccessedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Updated on each API request for this tenant"
+  }, {
+    "name" : "deployTaskId",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "platform" : true,
+    "description" : "UUID of the current/last deploy task"
+  }, {
+    "name" : "deployStatus",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "platform" : true,
+    "description" : "pending, in_progress, completed, failed"
+  }, {
+    "name" : "deployMessage",
+    "type" : "text",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Deploy progress or error message"
+  }, {
+    "name" : "deployedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "Timestamp of last successful deploy"
+  }, {
+    "name" : "adminCreated",
+    "type" : "boolean",
+    "persistent" : true,
+    "platform" : true,
+    "description" : "True if the most recent deploy created the admin user; false if the admin already existed and was left unchanged"
+  } ]
+}

@@ -1,0 +1,203 @@
+{
+  "name" : "AIMessage",
+  "tableName" : "ai_message_tbl",
+  "description" : "plan-69 — one message/event in a conversation. A conversation is a Task (type=\"agent\"); this row's taskId is the FK to that Task. Stores user input, assistant output, the model's tool-call/tool-response trace, and compaction summaries. Single source of truth for UI rendering (filter role IN ('user','assistant')) and pod context replay (load all WHERE compacted=false). Named AIMessage (NOT 'Message' — that collides with app-defined messaging entities); superseded AgentMessage; conversationId/conversationUuid dropped (the parent is taskId) and turnIndex renamed to seq. Explicit tableName ai_message_tbl.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "user" : [ "create", "read", "update", "delete" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Owner — denormalized from the parent Task (the conversation). Populated by the agent runtime / AOS bridge on insert. representsOwnership drives the ownership filter (52-D.2 / 52-D.3) so direct /data/Message reads stay scoped.",
+    "platform" : true
+  }, {
+    "name" : "taskId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "plan-69 — FK to the conversation Task (task_tbl, type=\"agent\"). Replaces AgentMessage.conversationId.",
+    "platform" : true
+  }, {
+    "name" : "uuid",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 64,
+    "indexed" : true,
+    "description" : "Parquet-friendly natural key. UUIDv4 set at INSERT by the producer (pod for tool_* / assistant / summary rows; AOS for user rows). Stable for the row's lifetime.",
+    "platform" : true
+  }, {
+    "name" : "seq",
+    "type" : "integer",
+    "persistent" : true,
+    "description" : "plan-69 — stable ordering within the conversation (1, 2, 3, ...). Was AgentMessage.turnIndex.",
+    "platform" : true
+  }, {
+    "name" : "role",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 20,
+    "enumValues" : "user,assistant,tool_call,tool_response,summary",
+    "description" : "What kind of event this row records. user/assistant are user-facing turns (the UI streams these). tool_call / tool_response make up the model's chronological trace within a turn. summary is a compaction artifact. UI filters role IN ('user','assistant'); pod replay loads everything WHERE compacted=false.",
+    "platform" : true
+  }, {
+    "name" : "kind",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 20,
+    "enumValues" : "text,action,error",
+    "defaultValue" : "text",
+    "description" : "'action' is valid only when role=user (action-link click). 'error' is valid only when role=assistant — populated when the agent loop failed.",
+    "platform" : true
+  }, {
+    "name" : "content",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "Markdown (assistant) or text/label (user)",
+    "platform" : true
+  }, {
+    "name" : "executorKind",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 20,
+    "enumValues" : "function,agent",
+    "description" : "plan-69 — kind of the frame that emitted this message (function | agent). Needed once nested calls interleave events from the parent agent, sub-agents, and functions, and because a function `foo` and an agent `foo` can share a name.",
+    "platform" : true
+  }, {
+    "name" : "executorName",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 128,
+    "description" : "plan-69 — name of the agent/function that emitted this message.",
+    "platform" : true
+  }, {
+    "name" : "toolName",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 128,
+    "description" : "Function/agent name being called. Set on tool_call (the callee the model wants to invoke) and tool_response (the callee whose result we're recording). NULL on user/assistant/summary rows.",
+    "platform" : true
+  }, {
+    "name" : "toolKind",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 20,
+    "enumValues" : "function,agent",
+    "description" : "plan-69 — kind of the callee on tool_call / tool_response (function | agent), alongside toolName.",
+    "platform" : true
+  }, {
+    "name" : "toolArgs",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Args dict for tool_call rows. NULL otherwise.",
+    "platform" : true
+  }, {
+    "name" : "toolResult",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Result payload for tool_response rows. May be large (entity rows, query results) — jsonb keeps Postgres happy and compresses well via TOAST. NULL otherwise.",
+    "platform" : true
+  }, {
+    "name" : "output",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Schema-validated structured output for an assistant turn, extracted by the runtime when the agent declares an outputSchema. Carries the collected/derived data separately from the conversational text in content. NULL when no outputSchema, on non-assistant rows, or when extraction failed. Read-only to API callers.",
+    "platform" : true
+  }, {
+    "name" : "actionIntent",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 100,
+    "description" : "Verb when kind=action (e.g., compose_reply)",
+    "platform" : true
+  }, {
+    "name" : "actionParams",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Action params dict when kind=action",
+    "platform" : true
+  }, {
+    "name" : "actionLabel",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 200,
+    "description" : "Displayed link label when kind=action",
+    "platform" : true
+  }, {
+    "name" : "tokenCount",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : "0",
+    "description" : "Tokens this row contributes to the prompt context. Computed at INSERT so the compaction trigger can SUM(tokenCount) WHERE compacted=false without re-tokenizing.",
+    "platform" : true
+  }, {
+    "name" : "compacted",
+    "type" : "boolean",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : "false",
+    "description" : "Set to true on rows replaced by a downstream 'summary' row during compaction. Pod context-load filters WHERE compacted=false. Originals stay for audit.",
+    "platform" : true
+  }, {
+    "name" : "clientMessageId",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 64,
+    "indexed" : true,
+    "unique" : true,
+    "description" : "Client-generated UUID for idempotent persistence. Pod attaches a fresh UUID per published 'persist' event; the AOS bridge dedups across multi-instance pub/sub fanout. NULL for rows written without it — Postgres UNIQUE treats each NULL as distinct.",
+    "platform" : true
+  }, {
+    "name" : "error",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "Structured error block {code, message} when kind=error. NULL on success rows.",
+    "platform" : true
+  }, {
+    "name" : "hasAttachment",
+    "type" : "boolean",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : "false",
+    "description" : "plan-57/69 — true when this message has at least one File2 row pointing to it (sourceClass='Message', sourceId=<this.id>). Set when persisting a user turn with attachmentFileIds.",
+    "platform" : true
+  } ]
+}

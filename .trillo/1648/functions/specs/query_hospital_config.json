@@ -1,0 +1,8 @@
+{
+  "name" : "queryHospitalConfig",
+  "shortDescription" : "Retrieves specific hospital configuration settings such as operating hours or policies.",
+  "description" : "<h4>Overview</h4><p>This function retrieves system-wide configuration settings for the hospital, such as operating hours, holiday schedules, or general policies, as stored in the <code>HospitalConfig</code> entity.</p><h4>Intended use</h4><p>Called by various UI components (patient, doctor, admin) to display relevant hospital information. Parameters can include <code>settingName</code> or <code>category</code> to retrieve specific settings or groups of settings.</p><h4>Logic</h4><ol><li>Validate input parameters (e.g., <code>settingName</code> or <code>category</code>).</li><li>Query the <code>HospitalConfig</code> entity using <code>ctx.data.query</code>, filtering by <code>settingName</code> or <code>category</code> as provided.</li><li>Return the matching configuration settings.</li></ol><h4>Entities</h4><ul><li>HospitalConfig</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "patient", "doctor", "admin" ],
+  "functionName" : "query_hospital_config"
+}

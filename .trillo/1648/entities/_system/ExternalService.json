@@ -1,0 +1,101 @@
+{
+  "name" : "ExternalService",
+  "description" : "Configuration for an outbound API integration (Stripe, SendGrid, etc.). Stores base URL, OAuth credentials (encrypted), scopes, and auth method. Functions access these via ctx.service('serviceName'). Generic data API is blocked because the row carries credential material; CUD goes through a dedicated service controller.",
+  "dataApi" : "open",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "length" : 255,
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Unique name per tenant (e.g., trillo-aos-default, hubspot-crm)",
+    "platform" : true
+  }, {
+    "name" : "baseUrl",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Service base URL (e.g., https://cloud-gw.trillo.ai)",
+    "platform" : true
+  }, {
+    "name" : "tokenEndpoint",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Token URL path (e.g., /api/v2.0/auth/token). Blank defaults to /api/v2.0/auth/token",
+    "platform" : true
+  }, {
+    "name" : "clientId",
+    "type" : "string",
+    "length" : 255,
+    "persistent" : true,
+    "description" : "Client ID issued by the external service",
+    "platform" : true
+  }, {
+    "name" : "clientSecretEncrypted",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "AES-256-GCM encrypted client secret. Never stored in plaintext.",
+    "platform" : true
+  }, {
+    "name" : "scopes",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Space-separated scopes to request during token exchange",
+    "platform" : true
+  }, {
+    "name" : "authMethod",
+    "type" : "string",
+    "length" : 50,
+    "defaultValue" : "client_credentials",
+    "persistent" : true,
+    "description" : "Authentication method: client_credentials, oauth2, api_key, basic",
+    "platform" : true
+  }, {
+    "name" : "enabled",
+    "type" : "boolean",
+    "defaultValue" : true,
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Human-readable purpose of this service connection"
+  } ]
+}

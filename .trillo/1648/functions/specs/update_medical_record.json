@@ -1,0 +1,8 @@
+{
+  "name" : "updateMedicalRecord",
+  "shortDescription" : "Handles the complex logic for updating a patient's medical record, including validation and audit logging.",
+  "description" : "<h4>Overview</h4><p>This function manages the update of a patient's medical record. It performs necessary validations, updates the <code>MedicalRecord</code> entity, and ensures that all modifications to Protected Health Information (PHI) are meticulously audit-logged for compliance.</p><h4>Intended use</h4><p>Called by the doctor-facing UI when a doctor modifies a patient's medical record. Parameters include the <code>medicalRecordId</code> and the fields to be updated (e.g., <code>content</code>, <code>diagnosisCode</code>).</p><h4>Logic</h4><ol><li>Retrieve the existing <code>MedicalRecord</code> using <code>ctx.data.get</code> with the provided <code>medicalRecordId</code>. If not found, return an error.</li><li>Validate the incoming update data against business rules (e.g., doctor must be assigned to patient, data format).</li><li>Update the <code>MedicalRecord</code> entity with the new data using <code>ctx.data.update</code>.</li><li>Audit-log the modification of PHI using <code>ctx.audit.log</code>, detailing the changes made, the doctor who made them, and the patient's record affected.</li><li>Return the updated <code>MedicalRecord</code>.</li></ol><h4>Entities</h4><ul><li>MedicalRecord</li><li>AuditLog</li><li>Patient</li><li>Doctor</li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "doctor" ],
+  "functionName" : "update_medical_record"
+}

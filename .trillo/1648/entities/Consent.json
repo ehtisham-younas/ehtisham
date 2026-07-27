@@ -1,0 +1,88 @@
+{
+  "name" : "Consent",
+  "description" : "Records a patient's consent for various policies or data usage.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "doctor" : [ "read" ],
+    "patient" : [ "read", "update" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "representsOwnership" : true,
+    "createOnly" : true,
+    "description" : "Owning patient — set automatically on create from the authenticated user; only the owning patient or an admin/doctor may access this consent record."
+  }, {
+    "name" : "patientId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The patient who granted or denied consent."
+  }, {
+    "name" : "policyName",
+    "type" : "string",
+    "length" : 255,
+    "required" : true,
+    "indexed" : true,
+    "searchable" : true,
+    "description" : "The name of the policy or data usage for which consent is recorded."
+  }, {
+    "name" : "consentDate",
+    "type" : "timestamptz",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The date and time when consent was granted or updated."
+  }, {
+    "name" : "isGranted",
+    "type" : "boolean",
+    "required" : true,
+    "indexed" : true,
+    "description" : "Indicates whether consent was granted (true) or denied (false)."
+  }, {
+    "name" : "version",
+    "type" : "string",
+    "length" : 50,
+    "required" : true,
+    "description" : "The version of the policy document to which consent applies."
+  }, {
+    "name" : "documentLink",
+    "type" : "string",
+    "length" : 500,
+    "description" : "A URL link to the full policy document."
+  }, {
+    "name" : "details",
+    "type" : "text",
+    "listHidden" : true,
+    "description" : "Additional details or notes regarding the consent."
+  } ]
+}

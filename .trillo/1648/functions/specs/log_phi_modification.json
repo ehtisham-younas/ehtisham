@@ -1,0 +1,8 @@
+{
+  "name" : "logPHIModification",
+  "shortDescription" : "Records an audit log entry whenever Protected Health Information (PHI) within a MedicalRecord is modified.",
+  "description" : "<h4>Overview</h4><p>This function records a detailed audit log entry whenever Protected Health Information (PHI) within a <code>MedicalRecord</code> is modified. This ensures a complete audit trail for all changes to sensitive patient data.</p><h4>Intended use</h4><p>Invoked as an event handler, specifically on 'post-save' events for the <code>MedicalRecord</code> entity when an update occurs. It captures the details of the modification.</p><h4>Logic</h4><ol><li>Receive event data containing the updated <code>MedicalRecord</code> record.</li><li>Identify the specific changes made to PHI fields within the <code>MedicalRecord</code>.</li><li>Create an audit log entry using <code>ctx.audit.log</code> with action 'PHI_MODIFICATION', resourceType 'MedicalRecord', and resourceId of the modified record.</li><li>Include contextual information such as the user who made the modification, the fields changed, and the timestamp.</li><li>Return a success status.</li></ol><h4>Entities</h4><ul><li>MedicalRecord</li><li>AuditLog</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "log_phi_modification"
+}

@@ -1,0 +1,122 @@
+{
+  "name" : "AuditLog",
+  "description" : "Audit trail of business and security events — who did what to which resource, with structured context, status, and reason fields. Used for compliance reporting and post-incident debugging. ACL is admin-read only: admin can browse audit entries via the generic data API; writes happen through AuditService and the dedicated /audit endpoint.",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "timestamp",
+    "type" : "timestamptz",
+    "persistent" : true,
+    "systemAttr" : true,
+    "description" : "Timestamp of the event in UTC. 'timestamptz' is ideal for storing Instant."
+  }, {
+    "name" : "sourceUid",
+    "type" : "string",
+    "description" : "The unique identifier of the actor/initiator (user ID, system name, service ID).",
+    "indexed" : true,
+    "persistent" : true,
+    "length" : 255
+  }, {
+    "name" : "idOfUser",
+    "type" : "biginteger",
+    "description" : "Numeric ID of the user, if applicable and distinct from sourceUid.",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "actorIpAddress",
+    "type" : "string",
+    "description" : "IP address of the actor who performed the action.",
+    "persistent" : true,
+    "length" : 45
+  }, {
+    "name" : "action",
+    "type" : "string",
+    "description" : "Standardized action code (e.g., USER_LOGIN, DOCUMENT_CREATE).",
+    "persistent" : true,
+    "indexed" : true,
+    "length" : 100,
+    "platform" : true
+  }, {
+    "name" : "type",
+    "type" : "string",
+    "description" : "Severity/Category of the audit event (e.g., INFO, WARN, ERROR, CRITICAL).",
+    "persistent" : true,
+    "length" : 20,
+    "platform" : true
+  }, {
+    "name" : "summary",
+    "type" : "string",
+    "description" : "Concise human-readable summary of the action.",
+    "persistent" : true,
+    "length" : 500,
+    "platform" : true
+  }, {
+    "name" : "resourceType",
+    "type" : "string",
+    "description" : "The type of entity that was affected or acted upon (e.g., UserAccount, Document).",
+    "persistent" : true,
+    "indexed" : true,
+    "length" : 100,
+    "platform" : true
+  }, {
+    "name" : "resourceId",
+    "type" : "string",
+    "description" : "The unique identifier of the specific resource that was affected.",
+    "persistent" : true,
+    "indexed" : true,
+    "length" : 255,
+    "platform" : true
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "description" : "Outcome of the action (SUCCESS or FAILURE).",
+    "persistent" : true,
+    "length" : 20,
+    "platform" : true
+  }, {
+    "name" : "reason",
+    "type" : "text",
+    "description" : "For 'FAILURE' status, a brief explanation of why the action failed.",
+    "persistent" : true
+  }, {
+    "name" : "context",
+    "type" : "json",
+    "description" : "JSON string containing additional name-value pairs for context (e.g., fileId, fileName, folderId).",
+    "persistent" : true
+  }, {
+    "name" : "detail",
+    "type" : "json",
+    "description" : "JSON string for more extensive details (e.g., stack trace, full payload difference).",
+    "persistent" : true
+  }, {
+    "name" : "taskId",
+    "type" : "biginteger",
+    "description" : "ID for linking to specific background tasks or jobs.",
+    "persistent" : true,
+    "indexed" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "biginteger",
+    "description" : "Identifier for multi-tenancy support.",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "txId",
+    "type" : "string",
+    "description" : "Unique UUID for correlating requests across services (transaction ID).",
+    "persistent" : true,
+    "indexed" : true,
+    "length" : 255,
+    "platform" : true
+  } ]
+}

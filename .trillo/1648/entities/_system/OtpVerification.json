@@ -1,0 +1,79 @@
+{
+  "name" : "OtpVerification",
+  "description" : "Email/phone OTP verification for guest onboarding and registration (plan-65). One row per target contact (email), holding the SHA-256 hash of the last code sent, its expiry, an attempts counter (brute-force guard), and a verified flag. Identity infra — reached only through the platform /api/v2.0/auth/send-otp and /verify-otp endpoints (AuthService, raised-privilege DataStore), never generic CRUD: dataApi is blocked.",
+  "dataApi" : "blocked",
+  "ownership" : "none",
+  "systemClass" : true,
+  "acl" : { },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "biginteger",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "systemAttr" : true,
+    "platform" : true
+  }, {
+    "name" : "email",
+    "type" : "string",
+    "length" : 255,
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "The target contact the OTP was sent to and is verified against — the record key.",
+    "platform" : true
+  }, {
+    "name" : "codeHash",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "description" : "SHA-256 hex of the last OTP sent to this email. The plaintext code is never stored.",
+    "platform" : true
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Epoch millis after which the code is no longer valid.",
+    "platform" : true
+  }, {
+    "name" : "verified",
+    "type" : "boolean",
+    "defaultValue" : "false",
+    "persistent" : true,
+    "description" : "True once a matching code has been verified for this email.",
+    "platform" : true
+  }, {
+    "name" : "attempts",
+    "type" : "integer",
+    "defaultValue" : "0",
+    "persistent" : true,
+    "description" : "Failed verify attempts since the last send. Reset on send; lockout at the platform max to blunt brute force.",
+    "platform" : true
+  } ]
+}

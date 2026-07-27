@@ -1,0 +1,208 @@
+{
+  "name" : "Task",
+  "description" : "Background task record. Tracks long-running operations (deploys, migrations, batch jobs) with status, worker assignment, timestamps, and an associated resource. Supports retries and cancellation. ACL is read-only via generic CRUD: task lifecycle (create, status transitions, cancel) goes through TaskService — direct CRUD on a Task row could forge completion or corrupt the scheduler's view of the job.",
+  "ownership" : "user",
+  "adminBypassesOwnership" : true,
+  "acl" : {
+    "admin" : [ "read" ],
+    "user" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "createOnly" : true,
+    "representsOwnership" : true,
+    "description" : "Initiator — id of user who created this task. representsOwnership drives the ownership filter (52-D.2 / 52-D.3).",
+    "platform" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "type",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 100,
+    "platform" : true
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 50,
+    "platform" : true
+  }, {
+    "name" : "workerId",
+    "type" : "string",
+    "persistent" : true,
+    "length" : 100
+  }, {
+    "name" : "startTime",
+    "type" : "timestamptz",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "endTime",
+    "type" : "timestamptz",
+    "persistent" : true,
+    "platform" : true
+  }, {
+    "name" : "cancelTime",
+    "type" : "timestamptz",
+    "persistent" : true
+  }, {
+    "name" : "lastPing",
+    "type" : "timestamptz",
+    "persistent" : true
+  }, {
+    "name" : "message",
+    "type" : "text",
+    "persistent" : true,
+    "description" : "The most recent message to indicate task progress",
+    "platform" : true
+  }, {
+    "name" : "resourceType",
+    "type" : "string",
+    "description" : "The type of entity that being processed by this task.",
+    "persistent" : true,
+    "length" : 100,
+    "platform" : true
+  }, {
+    "name" : "resourceId",
+    "type" : "long",
+    "description" : "The id of entity (activity, workflow) being processed by it.",
+    "persistent" : true,
+    "defaultValue" : "-1",
+    "platform" : true
+  }, {
+    "name" : "conversationId",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "indexed" : true,
+    "platform" : true,
+    "description" : "Agent conversation id this task belongs to (the conversation Task's own id). Set on child tasks (functions/sub-agents spawned during a conversation) and self-referenced on the conversation Task, so all tasks of a conversation group by conversationId. Null outside a conversation."
+  }, {
+    "name" : "updateResourceStatus",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : true
+  }, {
+    "name" : "content",
+    "type" : "text",
+    "persistent" : true
+  }, {
+    "name" : "retryCount",
+    "type" : "integer",
+    "defaultValue" : "0",
+    "persistent" : true
+  }, {
+    "name" : "uuid",
+    "type" : "string",
+    "length" : 64,
+    "persistent" : true,
+    "indexed" : true,
+    "description" : "plan-69 — parquet-friendly natural key; distinct from the bigint id."
+  }, {
+    "name" : "parentTaskId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : "-1",
+    "description" : "plan-69 — parent task in the nested-call tree (-1 = root)."
+  }, {
+    "name" : "rootTaskId",
+    "type" : "long",
+    "persistent" : true,
+    "indexed" : true,
+    "defaultValue" : "-1",
+    "description" : "plan-69 — root of the nested-call tree (self for a root task)."
+  }, {
+    "name" : "executorKind",
+    "type" : "string",
+    "length" : 20,
+    "enumValues" : "function,agent",
+    "persistent" : true,
+    "description" : "plan-69 — kind of the task's root executor: function | agent."
+  }, {
+    "name" : "executorName",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "description" : "plan-69 — name of the agent/function that owns the root turn. For agent conversations this equals the agent name (also in 'name')."
+  }, {
+    "name" : "title",
+    "type" : "string",
+    "length" : 200,
+    "persistent" : true,
+    "description" : "plan-69 — human title for a conversation (type=\"agent\"). Null for plain tasks."
+  }, {
+    "name" : "pinned",
+    "type" : "boolean",
+    "persistent" : true,
+    "defaultValue" : false,
+    "description" : "plan-69 — user-pinned conversation."
+  }, {
+    "name" : "lastTurnAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "plan-69 — epoch millis of the last message/turn in a conversation."
+  }, {
+    "name" : "messageCount",
+    "type" : "integer",
+    "persistent" : true,
+    "defaultValue" : "0",
+    "description" : "plan-69 — count of user-visible messages in a conversation."
+  }, {
+    "name" : "state",
+    "type" : "string",
+    "length" : 50,
+    "persistent" : true,
+    "description" : "plan-69 — conversation lifecycle (e.g. active/archived). Kept SEPARATE from task 'status' (which carries execution state: running/done/failed). Null for plain tasks."
+  }, {
+    "name" : "contextVars",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "plan-69 — agent context-variables bag (was AgentConversation.contextVars)."
+  }, {
+    "name" : "appState",
+    "type" : "jsonb",
+    "persistent" : true,
+    "description" : "plan-69 — agent app-state bag (was AgentConversation.appState)."
+  } ]
+}

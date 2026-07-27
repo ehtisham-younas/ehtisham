@@ -1,0 +1,150 @@
+{
+  "name" : "approveAppointment",
+  "shortDescription" : "Enables a doctor to approve a pending appointment request, updating its status and notifying the patient.",
+  "description" : "<h4>Overview</h4><p>This function allows a doctor to review and approve a pending appointment request. Upon approval, the appointment's status is updated, and the patient is notified.</p><h4>Intended use</h4><p>Called by the doctor-facing UI when a doctor accepts a patient's appointment request. Parameters include the <code>appointmentId</code> and the new status (e.g., 'confirmed')..</p><h4>Logic</h4><ol><li><p>Retrieve the <code>Appointment</code> record using <code>ctx.data.get</code> with the provided <code>appointmentId</code>. If not found or if its current status is not 'pending', return an error.</p></li><li><p>Update the <code>Appointment</code> record's <code>status</code> to 'confirmed' using <code>ctx.data.update</code>.</p></li><li><p>Retrieve the associated <code>Patient</code> record using <code>ctx.data.get</code> to get their contact information.</p></li><li><p>Send an email notification to the patient confirming their appointment using <code>ctx.email.send_template</code>.</p></li><li><p>Audit-log the appointment approval using <code>ctx.audit.log</code>, including the doctor, patient, and updated appointment details.</p></li><li><p>Return the updated <code>Appointment</code> record.</p></li></ol><h4>Entities</h4><ul><li><p>Appointment</p></li><li><p>Patient</p></li><li><p>Doctor</p></li><li><p>AuditLog</p></li></ul><h4>External Services</h4><ul><li><p>Email</p></li><li><p>Gmail</p></li><li><p>Hotmail</p></li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "doctor" ],
+  "functionName" : "approve_appointment",
+  "capabilities" : [ {
+    "method" : "GET",
+    "path" : "/api/v2.0/integrations/google/drive/files/{fileId}/content",
+    "grantable" : "privileged"
+  }, {
+    "op" : "read",
+    "className" : "AppConfig",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "AppMD",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "WebhookEndpoint",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "WebhookDelivery",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "VisitSummary",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "UserToAppRoleToTenant",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "TaskEvent",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Task",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "UserPreference",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "User",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "UserToTenant",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "SmsTemplate",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Patient",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "OutboundWebhook",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "KnowledgeNode",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Message",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "MedicalRecord",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "KnowledgeContainer",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "HospitalConfig",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Folder",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "FileRawData",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "FileContent",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "EmailUsage",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "File2",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "EmailTemplate",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "DoctorSchedule",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Doctor",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Consent",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "AppPolicy",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "Appointment",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "AIMessage",
+    "grantable" : "self-service"
+  }, {
+    "op" : "read",
+    "className" : "AgentMemory",
+    "grantable" : "self-service"
+  }, {
+    "method" : "POST",
+    "path" : "/api/v2.0/integrations/google/drive/files/{fileId}/move",
+    "grantable" : "privileged"
+  }, {
+    "method" : "DELETE",
+    "path" : "/api/v2.0/guest/users/{id}",
+    "grantable" : "privileged"
+  } ],
+  "role" : "user"
+}

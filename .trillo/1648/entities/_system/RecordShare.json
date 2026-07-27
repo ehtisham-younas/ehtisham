@@ -1,0 +1,95 @@
+{
+  "name" : "RecordShare",
+  "description" : "Generic record-sharing table (plan-52 slice 52-E). Each row grants one user (or group, future) read access to one record of a specific class. Used as the default share table for any class declaring `ownership: \"user\"` and `shareTable: \"RecordShare\"`. The framework is generic over the share-table name — a class may declare a different shareTable, but it must have this same column shape. Generic CRUD is blocked; reads and writes go through /api/v2.0/share/* endpoints which run their own authorization (record owner can grant / list grants; owner or grantee can revoke).",
+  "dataApi" : "open",
+  "systemClass" : true,
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "biginteger",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "systemAttr" : true,
+    "platform" : true
+  }, {
+    "name" : "className",
+    "type" : "string",
+    "length" : 100,
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Class name (PascalCase) of the shared record. Together with sharedRecordId identifies one row in one table.",
+    "platform" : true
+  }, {
+    "name" : "sharedRecordId",
+    "type" : "biginteger",
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "ID of the shared row in the table named by className. Deliberately verbose vs. recordId — disambiguates from this row's own id.",
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "biginteger",
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Grantee user. Exactly one of idOfUser / idOfGroup is set per row. V1 supports only user-shares.",
+    "platform" : true
+  }, {
+    "name" : "idOfGroup",
+    "type" : "biginteger",
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Grantee group (reserved — group-shares not enabled in V1; column present for forward compatibility).",
+    "platform" : true
+  }, {
+    "name" : "permission",
+    "type" : "string",
+    "length" : 20,
+    "enumValues" : "read,read-write,admin",
+    "defaultValue" : "read",
+    "persistent" : true,
+    "description" : "Granted permission level. V1 enforces visibility (read access) only; read-write and admin are stored but not yet honored on writes.",
+    "platform" : true
+  }, {
+    "name" : "sharedBy",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "User id that granted this share (audit field — the RecordShare row itself is the audit trail).",
+    "platform" : true
+  }, {
+    "name" : "expiresAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "description" : "Optional epoch-ms timestamp after which this share is no longer effective. Filtered by the ownership predicate (NULL means no expiry).",
+    "platform" : true
+  } ]
+}

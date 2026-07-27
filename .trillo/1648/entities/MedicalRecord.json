@@ -1,0 +1,123 @@
+{
+  "name" : "MedicalRecord",
+  "description" : "A patient's health information, including diagnoses, treatments, medications, and visit notes.",
+  "ownership" : "user",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "doctor" : [ "create", "read", "update" ],
+    "patient" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "representsOwnership" : true,
+    "createOnly" : true,
+    "description" : "Owning patient — set automatically on create from the authenticated user; only the owning patient or an admin/doctor may access this record."
+  }, {
+    "name" : "patientId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The patient this medical record belongs to."
+  }, {
+    "name" : "doctorId",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The doctor who created or last updated this record."
+  }, {
+    "name" : "recordDate",
+    "type" : "date",
+    "required" : true,
+    "indexed" : true,
+    "description" : "The date when this medical record entry was created or updated."
+  }, {
+    "name" : "recordType",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "indexed" : true,
+    "enumValues" : "diagnosis,treatment,medication,lab_result,visit_note,prescription,immunization",
+    "description" : "The type of medical record entry (e.g., diagnosis, medication)."
+  }, {
+    "name" : "content",
+    "type" : "text",
+    "required" : true,
+    "phi" : true,
+    "encrypt" : true,
+    "sensitive" : true,
+    "searchable" : true,
+    "listHidden" : true,
+    "description" : "The detailed content of the medical record entry."
+  }, {
+    "name" : "diagnosisCode",
+    "type" : "string",
+    "length" : 50,
+    "indexed" : true,
+    "phi" : true,
+    "description" : "Relevant diagnosis code (e.g., ICD-10)."
+  }, {
+    "name" : "medicationName",
+    "type" : "string",
+    "length" : 100,
+    "phi" : true,
+    "description" : "Name of the prescribed medication."
+  }, {
+    "name" : "dosage",
+    "type" : "string",
+    "length" : 50,
+    "phi" : true,
+    "description" : "Dosage information for medication."
+  }, {
+    "name" : "prescriptionDate",
+    "type" : "date",
+    "phi" : true,
+    "description" : "Date the medication was prescribed."
+  }, {
+    "name" : "labTestName",
+    "type" : "string",
+    "length" : 100,
+    "phi" : true,
+    "description" : "Name of the laboratory test performed."
+  }, {
+    "name" : "labResultValue",
+    "type" : "string",
+    "length" : 255,
+    "phi" : true,
+    "description" : "Result value of the laboratory test."
+  }, {
+    "name" : "visitSummaryId",
+    "type" : "long",
+    "indexed" : true,
+    "description" : "Optional link to a visit summary associated with this record."
+  } ]
+}

@@ -1,0 +1,121 @@
+{
+  "name" : "Doctor",
+  "description" : "Professional and contact information for a doctor, linked to a system user.",
+  "acl" : {
+    "admin" : [ "create", "read", "update", "delete" ],
+    "doctor" : [ "read", "update" ],
+    "patient" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "required" : true,
+    "indexed" : true,
+    "unique" : true,
+    "description" : "Associated system user ID for this doctor."
+  }, {
+    "name" : "firstName",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "pii" : true,
+    "naming" : true,
+    "searchable" : true,
+    "description" : "The doctor's first name."
+  }, {
+    "name" : "lastName",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "pii" : true,
+    "naming" : true,
+    "searchable" : true,
+    "description" : "The doctor's last name."
+  }, {
+    "name" : "specialty",
+    "type" : "string",
+    "length" : 100,
+    "required" : true,
+    "indexed" : true,
+    "searchable" : true,
+    "description" : "The doctor's medical specialty."
+  }, {
+    "name" : "contactEmail",
+    "type" : "string",
+    "length" : 255,
+    "unique" : true,
+    "pii" : true,
+    "pattern" : "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$",
+    "description" : "The doctor's primary contact email address."
+  }, {
+    "name" : "phoneNumber",
+    "type" : "string",
+    "length" : 20,
+    "pii" : true,
+    "description" : "The doctor's primary phone number."
+  }, {
+    "name" : "licenseNumber",
+    "type" : "string",
+    "length" : 50,
+    "unique" : true,
+    "pii" : true,
+    "sensitive" : true,
+    "appKey" : true,
+    "description" : "The doctor's medical license number."
+  }, {
+    "name" : "npiNumber",
+    "type" : "string",
+    "length" : 50,
+    "unique" : true,
+    "pii" : true,
+    "sensitive" : true,
+    "description" : "The doctor's National Provider Identifier (NPI) number."
+  }, {
+    "name" : "bio",
+    "type" : "text",
+    "searchable" : true,
+    "listHidden" : true,
+    "description" : "A short biography or professional summary of the doctor."
+  }, {
+    "name" : "hospitalAffiliation",
+    "type" : "string",
+    "length" : 100,
+    "indexed" : true,
+    "description" : "The hospital or clinic the doctor is affiliated with."
+  }, {
+    "name" : "status",
+    "type" : "string",
+    "length" : 50,
+    "indexed" : true,
+    "enumValues" : "active,inactive,on_leave",
+    "defaultValue" : "active",
+    "description" : "The current employment status of the doctor."
+  } ]
+}

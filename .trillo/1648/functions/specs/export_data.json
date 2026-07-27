@@ -1,0 +1,9 @@
+{
+  "name" : "exportData",
+  "shortDescription" : "Exports specified data in a given format (CSV/PDF) for analysis or compliance purposes.",
+  "description" : "<h4>Overview</h4><p>This function enables administrators to export data from various entities into specified formats like CSV or PDF, facilitating external analysis or compliance requirements.</p><h4>Intended use</h4><p>Called by the admin dashboard UI when an administrator initiates a data export. Parameters include the <code>entityType</code> (e.g., 'Doctor', 'MedicalRecord'), <code>format</code> ('CSV', 'PDF'), and optional filters.</p><h4>Logic</h4><ol><li><p>Validate the requested <code>entityType</code> and <code>format</code>.</p></li><li><p>Query the specified entity (e.g., <code>Patient</code>, <code>Doctor</code>, <code>Appointment</code>, <code>MedicalRecord</code>) using <code>ctx.data.query</code>, applying any provided filters.</p></li><li><p>Convert the retrieved data into the requested format (CSV or PDF).</p></li><li><p>Return the exported data as a file or a link to a generated file.</p></li></ol><h4>Entities</h4><ul><li><p>Patient</p></li><li><p>Doctor</p></li><li><p>Appointment</p></li><li><p>MedicalRecord</p></li></ul>",
+  "invocationMode" : "http",
+  "allowedAppRoles" : [ "admin" ],
+  "functionName" : "export_data",
+  "role" : "user"
+}

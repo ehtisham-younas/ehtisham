@@ -1,0 +1,90 @@
+{
+  "name" : "ApiClient",
+  "description" : "Client credentials for programmatic API access. Each row is an OAuth-style client (clientId + hashed secret + scopes) used by external systems and machine-to-machine integrations to authenticate against this tenant.",
+  "dataApi" : "open",
+  "acl" : {
+    "admin" : [ "read" ]
+  },
+  "attributes" : [ {
+    "name" : "id",
+    "type" : "biginteger",
+    "persistent" : true,
+    "primaryKey" : true,
+    "systemAttr" : true,
+    "autoSequence" : true
+  }, {
+    "name" : "createdAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "updatedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deleted",
+    "type" : "boolean",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "deletedAt",
+    "type" : "biginteger",
+    "persistent" : true,
+    "systemAttr" : true
+  }, {
+    "name" : "tenantId",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "Tenant this client belongs to (for multi-tenant scoping)",
+    "platform" : true
+  }, {
+    "name" : "idOfUser",
+    "type" : "long",
+    "defaultValue" : "-1",
+    "indexed" : true,
+    "persistent" : true,
+    "description" : "User who created this client",
+    "platform" : true
+  }, {
+    "name" : "clientId",
+    "type" : "string",
+    "length" : 128,
+    "indexed" : true,
+    "unique" : true,
+    "persistent" : true,
+    "description" : "Unique client identifier (e.g., app-name-uuid)",
+    "platform" : true
+  }, {
+    "name" : "clientSecretHash",
+    "type" : "string",
+    "length" : 128,
+    "persistent" : true,
+    "description" : "SHA-256 hash of the client secret. Plaintext is never stored.",
+    "platform" : true
+  }, {
+    "name" : "name",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Display name for the API client",
+    "platform" : true
+  }, {
+    "name" : "description",
+    "type" : "string",
+    "persistent" : true
+  }, {
+    "name" : "scopes",
+    "type" : "string",
+    "persistent" : true,
+    "description" : "Space-separated scopes (e.g., data:read data:write)",
+    "platform" : true
+  }, {
+    "name" : "active",
+    "type" : "boolean",
+    "defaultValue" : true,
+    "persistent" : true,
+    "platform" : true
+  } ]
+}

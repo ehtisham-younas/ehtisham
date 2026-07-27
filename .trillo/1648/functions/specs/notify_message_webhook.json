@@ -1,0 +1,8 @@
+{
+  "name" : "notifyMessageWebhook",
+  "shortDescription" : "Sends real-time webhook notifications to external systems when a new secure message is sent.",
+  "description" : "<h4>Overview</h4><p>This function sends real-time webhook notifications to external systems whenever a new secure <code>Message</code> is sent between a patient and a doctor within the HMP.</p><h4>Intended use</h4><p>Invoked as an event handler, specifically on 'post-save' events for the <code>Message</code> entity when a new message is created. It informs external systems about new communications.</p><h4>Logic</h4><ol><li>Receive event data containing the newly created <code>Message</code> record.</li><li>Format the <code>Message</code> data into a JSON payload suitable for the webhook.</li><li>Send the webhook notification to the configured <code>OutboundWebhook</code> endpoint using <code>ctx.webhook.send</code>.</li><li>Log the webhook delivery attempt and its outcome using <code>ctx.audit.log</code>.</li><li>Return a success or failure status.</li></ol><h4>Entities</h4><ul><li>Message</li><li>AuditLog</li></ul><h4>External Services</h4><ul><li>OutboundWebhook</li></ul>",
+  "invocationMode" : "event",
+  "allowedAppRoles" : [ "system" ],
+  "functionName" : "notify_message_webhook"
+}
