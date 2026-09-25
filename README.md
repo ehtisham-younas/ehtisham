@@ -7,7 +7,7 @@
   <a href="https://www.linkedin.com/in/ehtisham-younas-ab06962a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
 " target="_blank"><img src="https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
   <a href="https://github.com/ehtisham-younas" target="_blank"><img src="https://img.shields.io/badge/GitHub-100000?logo=github&logoColor=white" alt="GitHub"/></a>
-  <a href="ehtishamyounas.business@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white" alt="Email"/></a>
+  <a href="ehtishamyounas70@gmail.com"><img src="https://img.shields.io/badge/Email-D14836?logo=gmail&logoColor=white" alt="Email"/></a>
 </p>
 
 ---
@@ -40,7 +40,7 @@
 ---
 
 ### 📫 How to Reach Me:
-- LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/ehtisham-younas-ab06962a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
-- Email: [your-email@example.com](ehtishamyounas.business@gmail.com)
+- LinkedIn: https://www.linkedin.com/in/ehtisham-younas-ab06962a0?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app
+- Email: ehtishamyounas70@gmail.com
 
 <!-- Optional: You can add more badges and links to other platforms, such as Twitter, StackOverflow, etc. -->
