@@ -14,16 +14,19 @@
 - ✅ Skilled in **test case design**, **regression testing**, **API validation**, and **basic performance testing**.
 - 🤝 Experienced in **Agile/Scrum** environments with strong **defect tracking** and cross-team collaboration.
 - 🤖 Tested **AI agent-based applications**, covering responses, tool calls, workflows, and performance.
-- 🎯 Focused on delivering stable, high-quality releases across **SaaS, AI, and E-commerce** domains.
+- 🌐 Tested products across **SaaS, AI, Business Listings, Logistics, Healthcare, and Home Services** domains.
+- 🎯 Focused on delivering stable, high-quality releases.
 
 ---
 
 ### 💼 Experience
 **Software Quality Assurance Engineer** | Z-Axiss (Hybrid, Islamabad) | July 2024 – September 2026
-- Performed manual and automation testing for Web and Mobile applications, including end-to-end testing of SaaS-based products
+*Worked on multi-domain SaaS and AI products for Trillo Inc. (San Ramon, CA, USA)*
+
+- Performed manual and automation testing for Web and Mobile applications across Business Listings, Logistics, Healthcare, Home Services, and SaaS products
+- Automated Business Listings and Logistics applications using Cypress with JavaScript, maintaining the test code in GitHub repositories
 - Tested deployed AI agents, validating response accuracy, tool calls, multi-step workflows, and performance
 - Designed, executed, and maintained test cases and regression suites
-- Developed and maintained automation scripts using Cypress
 - Conducted API testing using Postman and validated backend workflows and API endpoints
 - Performed basic load testing using JMeter
 - Logged, tracked, and verified defects in Jira, following up until closure
