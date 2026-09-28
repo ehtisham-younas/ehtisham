@@ -13,29 +13,27 @@
 - 🔍 Software QA Engineer with **2+ years** of hands-on experience in **manual** and **automation testing** for **Web and Mobile** applications.
 - ✅ Skilled in **test case design**, **regression testing**, **API validation**, and **basic performance testing**.
 - 🤝 Experienced in **Agile/Scrum** environments with strong **defect tracking** and cross-team collaboration.
+- 🤖 Tested **AI agent-based applications**, covering responses, tool calls, workflows, and performance.
 - 🎯 Focused on delivering stable, high-quality releases across **SaaS, AI, and E-commerce** domains.
 
 ---
 
 ### 💼 Experience
 **Software Quality Assurance Engineer** | Z-Axiss (Hybrid, Islamabad) | July 2024 – September 2026
-- Performed manual and automation testing for Web and Mobile applications
+- Performed manual and automation testing for Web and Mobile applications, including end-to-end testing of SaaS-based products
+- Tested deployed AI agents, validating response accuracy, tool calls, multi-step workflows, and performance
 - Designed, executed, and maintained test cases and regression suites
 - Developed and maintained automation scripts using Cypress
-- Conducted API testing using Postman
-- Logged, tracked, and verified defects in Jira
-
-**Software Quality Assurance Engineer** | Trillo Inc. (Remote) | May 2025 – September 2026
-- Executed end-to-end testing for SaaS-based applications
-- Validated backend workflows and API endpoints
+- Conducted API testing using Postman and validated backend workflows and API endpoints
 - Performed basic load testing using JMeter
-- Participated in sprint planning, standups, and retrospectives
+- Logged, tracked, and verified defects in Jira, following up until closure
 
 ---
 
 ### ⚙️ Tech Stack & Skills
 - **Automation Testing**: Cypress, JavaScript
 - **Manual Testing**: Test Case Design, Regression, Smoke, and Exploratory Testing
+- **AI Application Testing**: AI Agent Testing, Response Validation, Tool Call & Workflow Testing
 - **API Testing**: Postman
 - **Performance Testing**: JMeter
 - **Defect Tracking & Project Management**: Jira
